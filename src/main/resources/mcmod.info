@@ -1,0 +1,9 @@
+[
+	{
+		"modid": "cpup-mc",
+		"name": "CoderPuppy's Library Mod",
+		"version": "$version",
+		"mcversion": "$mcVersion",
+		"authors": ["CoderPuppy"]
+	}
+]

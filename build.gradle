@@ -1,0 +1,74 @@
+ext {
+	info = [
+		name: 'cpup-mc',
+		group: 'cpup.mc.lib',
+		version: 'dev',
+		dependencies: [
+			'cpup.lib:cpup-lib:dev'
+		]
+	]
+
+	versions = [
+		scala: '2.10.3',
+		minecraft: '1.7.2',
+		forge: '10.12.0.1033'
+	]
+}
+
+buildscript {
+	repositories {
+		mavenCentral()
+		maven {
+			name = 'forge'
+			url = 'http://files.minecraftforge.net/maven'
+		}
+		maven {
+			name = 'sonatype'
+			url = 'https://oss.sonatype.org/content/repositories/snapshots/'
+		}
+	}
+
+	dependencies {
+		classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
+	}
+}
+
+apply plugin: 'java'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+	info.dependencies.each { dep ->
+		compile dep
+	}
+}
+
+apply plugin: 'forge'
+minecraft {
+	version = "$versions.minecraft-$versions.forge"
+	assetDir = 'eclipse/assets'
+}
+
+apply plugin: 'scala'
+dependencies.compile "org.scala-lang:scala-library:$versions.scala"
+
+apply plugin: 'maven'
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        expand version: info.version, mcVersion: versions.minecraft
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+archivesBaseName = info.name
+group = info.group
+version = info.version
