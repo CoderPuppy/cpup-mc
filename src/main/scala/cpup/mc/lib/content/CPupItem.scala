@@ -19,6 +19,7 @@ trait CPupItem[MOD <: CPupMod[_ <: CPupModRef]] extends Item {
 
 		_name = newName
 		setUnlocalizedName(mod.ref.modID + ":" + newName)
+		setTextureName(mod.ref.modID + ":" + newName)
 
 		this
 	}
