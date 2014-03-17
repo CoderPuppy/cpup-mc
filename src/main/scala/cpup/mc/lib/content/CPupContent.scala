@@ -3,8 +3,9 @@ package cpup.mc.lib.content
 import cpw.mods.fml.common.registry.GameRegistry
 import cpup.mc.lib.{CPupModRef, CPupMod}
 import scala.collection.mutable
-import net.minecraft.item.ItemBlock
+import net.minecraft.item.{ItemStack, ItemBlock}
 import cpw.mods.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
+import net.minecraftforge.oredict.ShapedOreRecipe
 
 trait CPupContent[MOD <: CPupMod[_ <: CPupModRef]] {
 	def mod: MOD
@@ -48,5 +49,15 @@ trait CPupContent[MOD <: CPupMod[_ <: CPupModRef]] {
 
 		blocks(block.name) = block
 		GameRegistry.registerBlock(block, block.name)
+	}
+
+	def addRecipe(result: ItemStack, recipe: Array[String], parts: Any*) {
+		GameRegistry.addRecipe(new ShapedOreRecipe(
+			result,
+			(Array(recipe) ++ parts.map(_ match {
+				case c: Char => Character.valueOf(c)
+				case v: Any => v
+			})).toSeq.toA.asInstanceOf[Array[Object]]: _*
+		))
 	}
 }
