@@ -37,7 +37,11 @@ trait CPupContent[MOD <: CPupMod[_ <: CPupModRef]] {
 		GameRegistry.registerItem(item, item.name, mod.ref.modID)
 	}
 
-	def registerBlock(block: CPupBlock[MOD], item: Class[_ <: ItemBlock] = classOf[ItemBlock]) {
+	def registerBlock(block: CPupBlock[MOD]) {
+		registerBlock(block, classOf[ItemBlock])
+	}
+
+	def registerBlock(block: CPupBlock[MOD], item: Class[_ <: ItemBlock], constructorArgs: Object*) {
 		if(block == null)
 			throw new RuntimeException("Cannot register null as a block")
 
@@ -48,7 +52,7 @@ trait CPupContent[MOD <: CPupMod[_ <: CPupModRef]] {
 		throw new RuntimeException("Attempt to register a block after initialization")
 
 		blocks(block.name) = block
-		GameRegistry.registerBlock(block, block.name)
+		GameRegistry.registerBlock(block, item, block.name, mod.ref.modID, constructorArgs: _*)
 	}
 
 	def addRecipe(result: ItemStack, recipe: Array[String], parts: Any*) {
