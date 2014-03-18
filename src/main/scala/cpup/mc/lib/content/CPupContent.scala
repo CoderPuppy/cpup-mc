@@ -57,7 +57,7 @@ trait CPupContent[MOD <: CPupMod[_ <: CPupModRef]] {
 			(Array(recipe) ++ parts.map(_ match {
 				case c: Char => Character.valueOf(c)
 				case v: Any => v
-			})).toSeq.toA.asInstanceOf[Array[Object]]: _*
+			})).toSeq.toArray.asInstanceOf[Array[Object]]: _*
 		))
 	}
 }
