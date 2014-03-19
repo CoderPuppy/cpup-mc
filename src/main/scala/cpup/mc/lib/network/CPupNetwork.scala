@@ -89,8 +89,8 @@ trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef, MSG], MSG <: CPupMessage] exte
 	}
 
 	@Override
-	def decode(ctx: ChannelHandlerContext, msg: FMLProxyPacket, out: util.List[Object]) {
-		val payload = msg.payload
+	def decode(ctx: ChannelHandlerContext, proxyMsg: FMLProxyPacket, out: util.List[Object]) {
+		val payload = proxyMsg.payload
 		val id = payload.readByte
 		val cla = messages(id)
 		if(cla == null) {
