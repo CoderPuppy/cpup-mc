@@ -14,7 +14,7 @@ abstract class Direction(val forgeDir: ForgeDirection) {
 
 	def rotated(axis: Direction, amt: Int = 1) = {
 		var res = this
-		for(i <- 0 to amt) {
+		for(i <- 1 to amt) {
 			res = Direction.from(res.forgeDir.getRotation(axis.forgeDir))
 		}
 		res
