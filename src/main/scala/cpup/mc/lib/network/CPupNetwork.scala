@@ -20,19 +20,19 @@ trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef, MSG], MSG <: CPupMessage] exte
 	def mod: MOD
 
 	var channels: util.EnumMap[Side, FMLEmbeddedChannel]
-	var finished = false
 	protected var messages = List[Class[_ <: MSG]]()
-
 	def register {
 		channels = NetworkRegistry.INSTANCE.newChannel(mod.ref.modID, this)
 	}
 
+	protected var _finished = false
+	def finished = _finished
 	def finish {
-		if(finished) {
+		if(_finished) {
 			return
 		}
 
-		finished = true
+		_finished = true
 
 		messages = messages.sortBy(_.getCanonicalName)
 	}
@@ -47,7 +47,7 @@ trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef, MSG], MSG <: CPupMessage] exte
 	}
 
 	def register(cla: Class[_ <: MSG]): Boolean = {
-		if(finished) {
+		if(_finished) {
 			throw new Exception("Attempt to register a message after post initialization: " + cla.getCanonicalName)
 			return false
 		}
