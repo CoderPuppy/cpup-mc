@@ -3,8 +3,8 @@ package cpup.mc.lib.util
 import net.minecraft.util.MathHelper
 import net.minecraftforge.common.util.ForgeDirection
 
-abstract class Direction(dir: ForgeDirection) {
-	if(dir == ForgeDirection.UNKNOWN) {
+abstract class Direction(val forgeDir: ForgeDirection) {
+	if(forgeDir == ForgeDirection.UNKNOWN) {
 		throw new RuntimeException("Unknown isn't a valid direction")
 	}
 
