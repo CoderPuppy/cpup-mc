@@ -19,6 +19,7 @@ case class BlockPos(world: World, x: Int, y: Int, z: Int) {
 
 	def block = world.getBlock(x, y, z)
 	def metadata = world.getBlockMetadata(x, y, z)
+	def tileEntity = world.getTileEntity(x, y, z)
 
 	def offset(offsetX: Int, offsetY: Int, offsetZ: Int) = BlockPos(world, x + offsetX, y + offsetY, z + offsetZ)
 	def offset(dir: Direction, dist: Int = 1): BlockPos = offset(dir.forgeDir.offsetX * dist, dir.forgeDir.offsetY * dist, dir.forgeDir.offsetZ * dist)
