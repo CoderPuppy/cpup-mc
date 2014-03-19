@@ -6,8 +6,9 @@ import scala.collection.mutable
 import net.minecraft.item.{ItemStack, ItemBlock}
 import cpw.mods.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
 import net.minecraftforge.oredict.ShapedOreRecipe
+import cpup.mc.lib.network.CPupMessage
 
-trait CPupContent[MOD <: CPupMod[_ <: CPupModRef]] {
+trait CPupContent[MOD <: CPupMod[_ <: CPupModRef, _ <: CPupMessage]] {
 	def mod: MOD
 
 	protected var _blocks = new mutable.HashMap[String, CPupBlock[MOD]]()

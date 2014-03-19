@@ -4,12 +4,12 @@ import org.apache.logging.log4j.LogManager
 import cpup.mc.lib.content.CPupContent
 import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
-import cpup.mc.lib.network.CPupNetwork
+import cpup.mc.lib.network.{CPupMessage, CPupNetwork}
 
-trait CPupMod[REF <: CPupModRef] {
+trait CPupMod[REF <: CPupModRef, MSG <: CPupMessage] {
 	def ref: REF
 	def content: CPupContent[_] = null
-	def network: CPupNetwork[_] = null
+	def network: CPupNetwork[_, MSG] = null
 
 	final val logger = LogManager.getLogger(ref.modID)
 

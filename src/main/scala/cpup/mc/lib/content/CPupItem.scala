@@ -3,7 +3,7 @@ package cpup.mc.lib.content
 import net.minecraft.item.Item
 import cpup.mc.lib.{CPupModRef, CPupMod}
 
-trait CPupItem[MOD <: CPupMod[_ <: CPupModRef]] extends Item {
+trait CPupItem[MOD <: CPupMod[_ <: CPupModRef, _]] extends Item {
 	def mod: MOD
 
 	protected var _name: String = null

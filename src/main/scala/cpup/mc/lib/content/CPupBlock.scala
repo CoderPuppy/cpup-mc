@@ -2,8 +2,9 @@ package cpup.mc.lib.content
 
 import net.minecraft.block.Block
 import cpup.mc.lib.{CPupModRef, CPupMod}
+import cpup.mc.lib.network.CPupMessage
 
-trait CPupBlock[MOD <: CPupMod[_ <: CPupModRef]] extends Block {
+trait CPupBlock[MOD <: CPupMod[_ <: CPupModRef, _ <: CPupMessage]] extends Block {
 	def mod: MOD
 
 	protected var _name: String = null
