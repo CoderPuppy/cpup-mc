@@ -34,30 +34,43 @@ object Direction {
 		def facing = 1
 		def opposite = East
 	}
+	case object Up extends Direction(ForgeDirection.UP) {
+		def side = 1
+		def facing = -1
+		def opposite = Down
+	}
+	case object Down extends Direction(ForgeDirection.DOWN) {
+		def side = 0
+		def facing = -1
+		def opposite = Up
+	}
 
 	def from(dir: ForgeDirection) = dir match {
 		case ForgeDirection.NORTH => North
 		case ForgeDirection.EAST => East
 		case ForgeDirection.SOUTH => South
 		case ForgeDirection.WEST => West
+		case ForgeDirection.UP => Up
+		case ForgeDirection.DOWN => Down
 		case _ => null
 	}
 
-	def fromSide(side: Int) = from(side match {
-		case 2 => ForgeDirection.NORTH
-		case 5 => ForgeDirection.EAST
-		case 3 => ForgeDirection.SOUTH
-		case 4 => ForgeDirection.WEST
-		case _ => ForgeDirection.UNKNOWN
-	})
+	def fromSide(side: Int) = side match {
+		case 2 => North
+		case 5 => East
+		case 3 => South
+		case 4 => West
+		case 1 => Up
+		case _ => null
+	}
 
-	def fromFacing(f: Int) = from(f match {
-		case 2 => ForgeDirection.NORTH
-		case 3 => ForgeDirection.EAST
-		case 0 => ForgeDirection.SOUTH
-		case 1 => ForgeDirection.WEST
-		case _ => ForgeDirection.UNKNOWN
-	})
+	def fromFacing(f: Int) = f match {
+		case 2 => North
+		case 3 => East
+		case 0 => South
+		case 1 => West
+		case _ => null
+	}
 
 	def fromYaw(rot: Float) = fromFacing(MathHelper.floor_double((rot / 90f) + 0.5) & 3)
 }
