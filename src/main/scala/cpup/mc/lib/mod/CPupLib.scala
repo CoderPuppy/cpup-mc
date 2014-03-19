@@ -7,5 +7,4 @@ import cpup.mc.lib.content.CPupContent
 @Mod(modid = Ref.modID, modLanguage = "scala")
 object CPupLib extends CPupMod[TRef] {
 	def ref = Ref
-	final val content = null
 }
