@@ -11,6 +11,16 @@ abstract class Direction(val forgeDir: ForgeDirection) {
 	def opposite: Direction
 	def side: Int
 	def facing: Int
+
+	def rotated(axis: Direction, amt: Int = 1) = {
+		var res = this
+		for(i <- 0 to amt) {
+			res = Direction.from(res.forgeDir.getRotation(axis.forgeDir))
+		}
+		res
+	}
+
+	def unrotated(axis: Direction, amt: Int = 1) = rotated(axis.opposite, amt)
 }
 
 object Direction {
