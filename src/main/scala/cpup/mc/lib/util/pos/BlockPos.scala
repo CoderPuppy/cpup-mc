@@ -3,6 +3,7 @@ package cpup.mc.lib.util.pos
 import net.minecraft.world.World
 import net.minecraft.block.Block
 import cpup.mc.lib.util.Direction
+import net.minecraft.tileentity.TileEntity
 
 case class BlockPos(world: World, x: Int, y: Int, z: Int) {
 	def setBlock(block: Block) = {
@@ -17,9 +18,19 @@ case class BlockPos(world: World, x: Int, y: Int, z: Int) {
 		this
 	}
 
+	def setTileEntity(te: TileEntity) = {
+		world.setTileEntity(x, y, z, te)
+
+		this
+	}
+
 	def block = world.getBlock(x, y, z)
 	def metadata = world.getBlockMetadata(x, y, z)
 	def tileEntity = world.getTileEntity(x, y, z)
+	def tileEntity_=(newTE: TileEntity) = {
+		setTileEntity(newTE)
+		newTE
+	}
 
 	def offset(offsetX: Int, offsetY: Int, offsetZ: Int) = BlockPos(world, x + offsetX, y + offsetY, z + offsetZ)
 	def offset(dir: Direction, dist: Int = 1): BlockPos = offset(dir.forgeDir.offsetX * dist, dir.forgeDir.offsetY * dist, dir.forgeDir.offsetZ * dist)
