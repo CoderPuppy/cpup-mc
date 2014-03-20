@@ -2,3 +2,6 @@
 build/
 eclipse/
 tmp/
+cpup-mc.iml
+cpup-mc.ipr
+cpup-mc.iws
