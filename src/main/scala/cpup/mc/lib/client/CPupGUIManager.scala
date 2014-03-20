@@ -1,13 +1,13 @@
 package cpup.mc.lib.client
 
-import cpw.mods.fml.common.network.IGuiHandler
+import cpw.mods.fml.common.network.{NetworkRegistry, IGuiHandler}
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.world.World
 import cpup.mc.lib.CPupMod
 import net.minecraft.client.gui.GuiScreen
-import java.awt.Container
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import cpup.mc.lib.util.pos.BlockPos
+import net.minecraft.inventory.Container
 
 class CPupGUIManager[MOD <: CPupMod[_, _], GUI <: CPupGUI[MOD, _ <: GuiScreen, _ <: Container]](val mod: MOD) extends IGuiHandler {
 	protected var guis = List[GUI]()
@@ -20,10 +20,16 @@ class CPupGUIManager[MOD <: CPupMod[_, _], GUI <: CPupGUI[MOD, _ <: GuiScreen, _
 		guis ::= gui
 	}
 
-	def open(gui: GUI) {
+	def open(player: EntityPlayer, pos: BlockPos, gui: GUI) {
 		if(!guis.contains(gui)) {
 			throw new NullPointerException("Attempt to open unregistered gui: " + gui.name + " (" + gui.getClass.getCanonicalName + ")")
 		}
+
+		player.openGui(mod, guis.indexOf(gui), pos.world, pos.x, pos.y, pos.z)
+	}
+
+	def register {
+		NetworkRegistry.INSTANCE.registerGuiHandler(mod, this)
 	}
 
 	protected var _finished = false
