@@ -3,13 +3,22 @@ package cpup.mc.lib.content
 import cpw.mods.fml.common.registry.GameRegistry
 import cpup.mc.lib.{CPupModRef, CPupMod}
 import scala.collection.mutable
-import net.minecraft.item.{ItemStack, ItemBlock}
+import net.minecraft.item.{Item, ItemStack, ItemBlock}
 import cpw.mods.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
-import net.minecraftforge.oredict.ShapedOreRecipe
+import net.minecraftforge.oredict.{ShapelessOreRecipe, ShapedOreRecipe}
 import cpup.mc.lib.network.CPupMessage
+import net.minecraft.creativetab.CreativeTabs
+import net.minecraft.init.{Blocks, Items}
 
 trait CPupContent[MOD <: CPupMod[_ <: CPupModRef, _ <: CPupMessage]] {
 	def mod: MOD
+
+	final val creativeTab = new CreativeTabs(mod.ref.modID) {
+		override def getTabIconItem = null
+		override def getIconItemStack: ItemStack = creativeTabItem
+	}
+
+	def creativeTabItem: ItemStack = new ItemStack(Blocks.emerald_block)
 
 	protected var _blocks = new mutable.HashMap[String, CPupBlock[MOD]]()
 	def blocks = _blocks
@@ -39,7 +48,7 @@ trait CPupContent[MOD <: CPupMod[_ <: CPupModRef, _ <: CPupMessage]] {
 	}
 
 	def registerBlock(block: CPupBlock[MOD]) {
-		registerBlock(block, classOf[ItemBlock])
+		registerBlock(block, classOf[GenericItemBlock[MOD]])
 	}
 
 	def registerBlock(block: CPupBlock[MOD], item: Class[_ <: ItemBlock], constructorArgs: Object*) {
@@ -63,6 +72,13 @@ trait CPupContent[MOD <: CPupMod[_ <: CPupModRef, _ <: CPupMessage]] {
 				case c: Char => Character.valueOf(c)
 				case v: Any => v
 			})).toSeq.toArray.asInstanceOf[Array[Object]]: _*
+		))
+	}
+
+	def addShapelessRecipe(result: ItemStack, parts: Object*) {
+		GameRegistry.addRecipe(new ShapelessOreRecipe(
+			result,
+			parts: _*
 		))
 	}
 }
