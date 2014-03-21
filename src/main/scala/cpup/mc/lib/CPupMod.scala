@@ -6,10 +6,9 @@ import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
 import cpup.mc.lib.network.{CPupMessage, CPupNetwork}
 
-trait CPupMod[REF <: CPupModRef, MSG <: CPupMessage] {
+trait CPupMod[REF <: CPupModRef] {
 	def ref: REF
-	def content: CPupContent[_] = null
-	def network: CPupNetwork[_, MSG] = null
+	def content: CPupContent[_ <: CPupMod[REF]] = null
 
 	final val logger = LogManager.getLogger(ref.modID)
 
@@ -21,12 +20,10 @@ trait CPupMod[REF <: CPupModRef, MSG <: CPupMessage] {
 	@EventHandler
 	def init(e: FMLInitializationEvent) {
 		if(content != null) content.init(e)
-		if(network != null) network.register
 	}
 
 	@EventHandler
 	def postInit(e: FMLPostInitializationEvent) {
 		if(content != null) content.postInit(e)
-		if(network != null) network.finish
 	}
 }

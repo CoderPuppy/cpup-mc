@@ -9,7 +9,7 @@ import cpw.mods.fml.relauncher.{Side, SideOnly}
 import cpup.mc.lib.util.pos.BlockPos
 import net.minecraft.inventory.Container
 
-class CPupGUIManager[MOD <: CPupMod[_, _], GUI <: CPupGUI[MOD, _ <: GuiScreen, _ <: Container]](val mod: MOD) extends IGuiHandler {
+class CPupGUIManager[MOD <: CPupMod[_], GUI <: CPupGUI[MOD, _ <: GuiScreen, _ <: Container]](val mod: MOD) extends IGuiHandler {
 	protected var guis = List[GUI]()
 
 	def register(gui: GUI) {

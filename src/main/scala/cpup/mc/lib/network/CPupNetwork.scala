@@ -3,7 +3,7 @@ package cpup.mc.lib.network
 import cpup.mc.lib.{ModLifecycleHandler, CPupModRef, CPupMod}
 import cpw.mods.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent}
 import java.util
-import cpw.mods.fml.common.network.{NetworkRegistry, FMLEmbeddedChannel}
+import cpw.mods.fml.common.network.{FMLOutboundHandler, NetworkRegistry, FMLEmbeddedChannel}
 import cpw.mods.fml.relauncher.{SideOnly, Side}
 import io.netty.handler.codec.MessageToMessageCodec
 import cpw.mods.fml.common.network.internal.FMLProxyPacket
@@ -14,13 +14,15 @@ import cpw.mods.fml.common.FMLCommonHandler
 import net.minecraft.network.NetHandlerPlayServer
 import net.minecraft.client.Minecraft
 import net.minecraft.entity.player.EntityPlayer
+import cpup.mc.lib.util.pos.BlockPos
+import cpup.mc.lib.content.CPupBlock
 
 @ChannelHandler.Sharable
-trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef, MSG], MSG <: CPupMessage] extends MessageToMessageCodec[FMLProxyPacket, MSG] with ModLifecycleHandler {
+trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef]] extends MessageToMessageCodec[FMLProxyPacket, CPupMessage[MOD]] with ModLifecycleHandler {
 	def mod: MOD
 
-	var channels: util.EnumMap[Side, FMLEmbeddedChannel]
-	protected var messages = List[Class[_ <: MSG]]()
+	var channels: util.EnumMap[Side, FMLEmbeddedChannel] = null
+	protected var messages = List[Class[_ <: CPupMessage[MOD]]]()
 	def register {
 		channels = NetworkRegistry.INSTANCE.newChannel(mod.ref.modID, this)
 	}
@@ -40,13 +42,19 @@ trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef, MSG], MSG <: CPupMessage] exte
 	override def init(e: FMLInitializationEvent) { register }
 	override def postInit(e: FMLPostInitializationEvent) { finish }
 
-	def handleMessage(msg: MSG, player: EntityPlayer) {
-		if(msg.isInstanceOf[TEMsg]) {
+	def handleMessage(msg: CPupMessage[MOD], player: EntityPlayer) {
+		if(msg.isInstanceOf[BlockMessage[MOD]]) {
+			val bMsg = msg.asInstanceOf[BlockMessage[MOD]]
+			val pos = BlockPos(player.worldObj, bMsg.x, bMsg.y, bMsg.z)
+			val block = pos.block
 
+			if(block.isInstanceOf[CPupBlock[MOD]]) {
+				block.asInstanceOf[CPupBlock[MOD]].handleMessage(bMsg)
+			}
 		}
 	}
 
-	def register(cla: Class[_ <: MSG]): Boolean = {
+	def register(cla: Class[_ <: CPupMessage[MOD]]): Boolean = {
 		if(_finished) {
 			throw new Exception("Attempt to register a message after post initialization: " + cla.getCanonicalName)
 			return false
@@ -75,7 +83,7 @@ trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef, MSG], MSG <: CPupMessage] exte
 	}
 
 	@Override
-	def encode(ctx: ChannelHandlerContext, msg: MSG, out: util.List[Object]) {
+	def encode(ctx: ChannelHandlerContext, msg: CPupMessage[MOD], out: util.List[Object]) {
 		val buffer = Unpooled.buffer
 		val cla = msg.getClass
 		if(!messages.contains(cla)) {
@@ -112,4 +120,10 @@ trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef, MSG], MSG <: CPupMessage] exte
 
 	@SideOnly(Side.CLIENT)
 	protected def getClientPlayer = Minecraft.getMinecraft.thePlayer
+
+	def sendToServer(msg: CPupMessage[MOD]) = {
+		channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER)
+		channels.get(Side.CLIENT).writeAndFlush(msg)
+		this
+	}
 }

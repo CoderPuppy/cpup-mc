@@ -2,10 +2,10 @@ package cpup.mc.lib.content
 
 import net.minecraft.block.Block
 import cpup.mc.lib.{CPupModRef, CPupMod}
-import cpup.mc.lib.network.CPupMessage
+import cpup.mc.lib.network.{BlockMessage, CPupMessage}
 import net.minecraft.creativetab.CreativeTabs
 
-trait CPupBlock[MOD <: CPupMod[_ <: CPupModRef, _ <: CPupMessage]] extends Block {
+trait CPupBlock[MOD <: CPupMod[_ <: CPupModRef]] extends Block {
 	def mod: MOD
 
 	protected var _name: String = null
@@ -31,5 +31,9 @@ trait CPupBlock[MOD <: CPupMod[_ <: CPupModRef, _ <: CPupMessage]] extends Block
 			tabs ++= Array(mod.content.creativeTab)
 		}
 		tabs
+	}
+
+	def handleMessage(msg: BlockMessage[MOD]) {
+		mod.logger.warn("Unhandled message: " + msg.toString)
 	}
 }

@@ -6,7 +6,7 @@ import net.minecraft.tileentity.TileEntity
 import net.minecraft.world.World
 import net.minecraft.block.{ITileEntityProvider, Block}
 
-trait CPupBlockContainer[MOD <: CPupMod[_ <: CPupModRef, _ <: CPupMessage]] extends CPupBlock[MOD] with ITileEntityProvider {
+trait CPupBlockContainer[MOD <: CPupMod[_ <: CPupModRef]] extends CPupBlock[MOD] with ITileEntityProvider {
 	override def breakBlock(world: World, x: Int, y: Int, z: Int, block: Block, meta: Int) {
 		super.breakBlock(world, x, y, z, block, meta)
 		world.removeTileEntity(x, y, z)

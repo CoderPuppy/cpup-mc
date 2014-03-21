@@ -5,7 +5,7 @@ import net.minecraft.block.Block
 import net.minecraft.item.ItemBlock
 import cpup.mc.lib.network.CPupMessage
 
-class GenericItemBlock[MOD <: CPupMod[_ <: CPupModRef, _ <: CPupMessage]](block: Block) extends ItemBlock(block) {
+class GenericItemBlock[MOD <: CPupMod[_ <: CPupModRef]](block: Block) extends ItemBlock(block) {
 	if(!block.isInstanceOf[CPupBlock[MOD]]) {
 		throw new ClassCastException("GenericItemBlock is only for CPupBlocks")
 	}

@@ -6,6 +6,6 @@ import cpup.mc.lib.content.CPupContent
 import cpup.mc.lib.network.CPupMessage
 
 @Mod(modid = Ref.modID, modLanguage = "scala")
-object CPupLib extends CPupMod[TRef, CPupMessage] {
+object CPupLib extends CPupMod[TRef] {
 	def ref = Ref
 }

@@ -10,7 +10,7 @@ import cpup.mc.lib.network.CPupMessage
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.init.{Blocks, Items}
 
-trait CPupContent[MOD <: CPupMod[_ <: CPupModRef, _ <: CPupMessage]] {
+trait CPupContent[MOD <: CPupMod[_ <: CPupModRef]] {
 	def mod: MOD
 
 	final val creativeTab = new CreativeTabs(mod.ref.modID) {

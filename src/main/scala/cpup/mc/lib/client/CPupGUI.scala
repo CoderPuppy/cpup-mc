@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.world.World
 import cpup.mc.lib.util.pos.BlockPos
 
-trait CPupGUI[MOD <: CPupMod[_, _], GUI <: GuiScreen, CONT <: Container] {
+trait CPupGUI[MOD <: CPupMod[_], GUI <: GuiScreen, CONT <: Container] {
 	def name: String
 	def mod: MOD
 
