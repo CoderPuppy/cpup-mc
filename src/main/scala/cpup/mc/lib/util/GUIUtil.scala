@@ -12,7 +12,7 @@ object GUIUtil {
 	def mc = Minecraft.getMinecraft
 	def tess = Tessellator.instance
 
-	def drawItemIconAt(icon: IIcon, x: Int, y: Int, z: Double, width: Int, height: Int) {
+	def drawItemIconAt(icon: IIcon, x: Double, y: Double, z: Double, width: Double, height: Double) {
 		GL11.glMatrixMode(5890)
 		GL11.glPushMatrix
 		mc.renderEngine.bindTexture(itemsIcon)
