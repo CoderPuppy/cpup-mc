@@ -37,4 +37,12 @@ case class BlockPos(world: World, x: Int, y: Int, z: Int) {
 
 	def isAir = block.isAir(world, x, y, z)
 	def isReplaceable = block.isReplaceable(world, x, y, z)
+
+	def tryReplaceWith(block: Block) { tryReplaceWith(block, 0) }
+	def tryReplaceWith(block: Block, meta: Int) {
+		if(isReplaceable || isAir) {
+			setBlock(block)
+			setMetadata(meta, 2)
+		}
+	}
 }
