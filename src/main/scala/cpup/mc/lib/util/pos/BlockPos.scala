@@ -45,4 +45,8 @@ case class BlockPos(world: World, x: Int, y: Int, z: Int) {
 			setMetadata(meta, 2)
 		}
 	}
+
+	def scheduleUpdateTick(time: Int) {
+		world.scheduleBlockUpdate(x, y, z, block, time)
+	}
 }
