@@ -4,6 +4,8 @@ import net.minecraft.entity.{EntityLivingBase, Entity}
 import net.minecraft.util.{MathHelper, MovingObjectPosition, AxisAlignedBB, Vec3}
 import java.util.List
 import net.minecraft.entity.item.EntityItemFrame
+import cpw.mods.fml.common.FMLCommonHandler
+import cpw.mods.fml.relauncher.Side
 
 object EntityUtil {
 	def getPos(entity: Entity) = {
@@ -22,7 +24,11 @@ object EntityUtil {
 		val pos = getPos(entity)
 		val look = getLook(entity)
 		val farReach = pos.addVector(look.xCoord * reach, look.yCoord * reach, look.zCoord * reach)
-//		println("pos, look, farReach", pos, look, farReach)
+
+		if(FMLCommonHandler.instance.getEffectiveSide == Side.CLIENT) {
+			pos.yCoord -= 2 // TODO: Figure out why I need this
+		}
+
 		entity.worldObj.func_147447_a(pos, farReach, false, false, true)
 	}
 
