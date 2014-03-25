@@ -9,7 +9,11 @@ import cpw.mods.fml.relauncher.Side
 
 object EntityUtil {
 	def getPos(entity: Entity) = {
-		entity.worldObj.getWorldVec3Pool.getVecFromPool(entity.posX, entity.posY, entity.posZ)
+		var y = entity.posY
+		if(FMLCommonHandler.instance.getEffectiveSide == Side.SERVER) {
+			y += 1.6200000047683716 // TODO: Figure out why I need this
+		}
+		entity.worldObj.getWorldVec3Pool.getVecFromPool(entity.posX, y, entity.posZ)
 	}
 
 	def getLook(entity: Entity) = {
@@ -24,10 +28,6 @@ object EntityUtil {
 		val pos = getPos(entity)
 		val look = getLook(entity)
 		val farReach = pos.addVector(look.xCoord * reach, look.yCoord * reach, look.zCoord * reach)
-
-		if(FMLCommonHandler.instance.getEffectiveSide == Side.CLIENT) {
-			pos.yCoord -= 2 // TODO: Figure out why I need this
-		}
 
 		entity.worldObj.func_147447_a(pos, farReach, false, false, true)
 	}
