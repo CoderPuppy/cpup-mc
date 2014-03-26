@@ -26,10 +26,9 @@ object EntityUtil {
 
 	def getMOPBlock(entity: EntityLivingBase, reach: Double) = {
 		val pos = getPos(entity)
-		val look = getLook(entity)
-		val farReach = pos.addVector(look.xCoord * reach, look.yCoord * reach, look.zCoord * reach)
+		val farLook = VectorUtil.getFarLook(pos, getLook(entity), reach)
 
-		entity.worldObj.func_147447_a(pos, farReach, false, false, true)
+		entity.worldObj.func_147447_a(pos, farLook, false, false, true)
 	}
 
 	def getMOPBoth(entity: EntityLivingBase, _reach: Double) = {
@@ -42,11 +41,11 @@ object EntityUtil {
 		}
 
 		val look = getLook(entity)
-		val farReach = pos.addVector(look.xCoord * reach, look.yCoord * reach, look.zCoord * reach)
+		val farLook = VectorUtil.getFarLook(pos, look, reach)
 		var pointedEntity: Entity = null
 		var vec33: Vec3 = null
 		val f1: Float = 1.0F
-		val list: List[_] = entity.worldObj.getEntitiesWithinAABBExcludingEntity(entity, entity.boundingBox.addCoord(look.xCoord * reach, look.yCoord * reach, look.zCoord * reach).expand(f1.asInstanceOf[Double], f1.asInstanceOf[Double], f1.asInstanceOf[Double]))
+		val list: List[_] = entity.worldObj.getEntitiesWithinAABBExcludingEntity(entity, VectorUtil.getFarLook(entity.boundingBox, look, reach).expand(f1.asInstanceOf[Double], f1.asInstanceOf[Double], f1.asInstanceOf[Double]))
 		var d2: Double = reach;
 		{
 			var i: Int = 0
@@ -55,27 +54,27 @@ object EntityUtil {
 					val entity: Entity = list.get(i).asInstanceOf[Entity]
 					if(entity.canBeCollidedWith) {
 						val f2: Float = entity.getCollisionBorderSize
-						val axisalignedbb: AxisAlignedBB = entity.boundingBox.expand(f2.asInstanceOf[Double], f2.asInstanceOf[Double], f2.asInstanceOf[Double])
-						val movingobjectposition: MovingObjectPosition = axisalignedbb.calculateIntercept(pos, farReach)
-						if(axisalignedbb.isVecInside(pos)) {
+						val aabb: AxisAlignedBB = entity.boundingBox.expand(f2.asInstanceOf[Double], f2.asInstanceOf[Double], f2.asInstanceOf[Double])
+						val mop2: MovingObjectPosition = aabb.calculateIntercept(pos, farLook)
+						if(aabb.isVecInside(pos)) {
 							if(0.0D < d2 || d2 == 0.0D) {
 								pointedEntity = entity
-								vec33 = if(movingobjectposition == null) pos else movingobjectposition.hitVec
+								vec33 = if(mop2 == null) pos else mop2.hitVec
 								d2 = 0.0D
 							}
 						}
-						else if(movingobjectposition != null) {
-							val d3: Double = pos.distanceTo(movingobjectposition.hitVec)
+						else if(mop2 != null) {
+							val d3: Double = pos.distanceTo(mop2.hitVec)
 							if(d3 < d2 || d2 == 0.0D) {
 								if(entity == entity.ridingEntity && !entity.canRiderInteract) {
 									if(d2 == 0.0D) {
 										pointedEntity = entity
-										vec33 = movingobjectposition.hitVec
+										vec33 = mop2.hitVec
 									}
 								}
 								else {
 									pointedEntity = entity
-									vec33 = movingobjectposition.hitVec
+									vec33 = mop2.hitVec
 									d2 = d3
 								}
 							}
