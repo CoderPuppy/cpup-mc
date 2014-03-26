@@ -18,8 +18,8 @@ object VectorUtil {
 
 	def toBlockPos(world: World, vec: Vec3) = BlockPos(
 		world,
-		MathHelper.floor_double(vec.xCoord),
-		MathHelper.floor_double(vec.yCoord),
-		MathHelper.floor_double(vec.zCoord)
+		MathHelper.floor_double(vec.xCoord + 0.5),
+		MathHelper.floor_double(vec.yCoord + 0.5),
+		MathHelper.floor_double(vec.zCoord + 0.5)
 	)
 }
