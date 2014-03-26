@@ -45,7 +45,7 @@ object EntityUtil {
 		var pointedEntity: Entity = null
 		var vec33: Vec3 = null
 		val f1: Float = 1.0F
-		val list: List[_] = entity.worldObj.getEntitiesWithinAABBExcludingEntity(entity, VectorUtil.getFarLook(entity.boundingBox, look, reach).expand(f1.asInstanceOf[Double], f1.asInstanceOf[Double], f1.asInstanceOf[Double]))
+		val list: List[_] = entity.worldObj.getEntitiesWithinAABBExcludingEntity(entity, entity.boundingBox.addCoord(look.xCoord * reach, look.yCoord * reach, look.zCoord * reach).expand(f1.asInstanceOf[Double], f1.asInstanceOf[Double], f1.asInstanceOf[Double]))
 		var d2: Double = reach;
 		{
 			var i: Int = 0
@@ -54,27 +54,27 @@ object EntityUtil {
 					val entity: Entity = list.get(i).asInstanceOf[Entity]
 					if(entity.canBeCollidedWith) {
 						val f2: Float = entity.getCollisionBorderSize
-						val aabb: AxisAlignedBB = entity.boundingBox.expand(f2.asInstanceOf[Double], f2.asInstanceOf[Double], f2.asInstanceOf[Double])
-						val mop2: MovingObjectPosition = aabb.calculateIntercept(pos, farLook)
-						if(aabb.isVecInside(pos)) {
+						val axisalignedbb: AxisAlignedBB = entity.boundingBox.expand(f2.asInstanceOf[Double], f2.asInstanceOf[Double], f2.asInstanceOf[Double])
+						val movingobjectposition: MovingObjectPosition = axisalignedbb.calculateIntercept(pos, farLook)
+						if(axisalignedbb.isVecInside(pos)) {
 							if(0.0D < d2 || d2 == 0.0D) {
 								pointedEntity = entity
-								vec33 = if(mop2 == null) pos else mop2.hitVec
+								vec33 = if(movingobjectposition == null) pos else movingobjectposition.hitVec
 								d2 = 0.0D
 							}
 						}
-						else if(mop2 != null) {
-							val d3: Double = pos.distanceTo(mop2.hitVec)
+						else if(movingobjectposition != null) {
+							val d3: Double = pos.distanceTo(movingobjectposition.hitVec)
 							if(d3 < d2 || d2 == 0.0D) {
 								if(entity == entity.ridingEntity && !entity.canRiderInteract) {
 									if(d2 == 0.0D) {
 										pointedEntity = entity
-										vec33 = mop2.hitVec
+										vec33 = movingobjectposition.hitVec
 									}
 								}
 								else {
 									pointedEntity = entity
-									vec33 = mop2.hitVec
+									vec33 = movingobjectposition.hitVec
 									d2 = d3
 								}
 							}
