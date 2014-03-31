@@ -24,14 +24,14 @@ object EntityUtil {
 		entity.worldObj.getWorldVec3Pool.getVecFromPool((f2 * f3).asInstanceOf[Double], f4.asInstanceOf[Double], (f1 * f3).asInstanceOf[Double])
 	}
 
-	def getMOPBlock(entity: EntityLivingBase, reach: Double) = {
+	def getMOPBlock(entity: Entity, reach: Double) = {
 		val pos = getPos(entity)
 		val farLook = VectorUtil.getFarLook(pos, getLook(entity), reach)
 
 		entity.worldObj.func_147447_a(pos, farLook, false, false, true)
 	}
 
-	def getMOPBoth(entity: EntityLivingBase, _reach: Double) = {
+	def getMOPBoth(entity: Entity, _reach: Double) = {
 		var reach = _reach
 		var mop = getMOPBlock(entity, reach)
 		val pos = getPos(entity)
