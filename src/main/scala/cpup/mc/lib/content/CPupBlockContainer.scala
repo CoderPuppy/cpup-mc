@@ -1,8 +1,6 @@
 package cpup.mc.lib.content
 
 import cpup.mc.lib.{CPupModRef, CPupMod}
-import cpup.mc.lib.network.CPupMessage
-import net.minecraft.tileentity.TileEntity
 import net.minecraft.world.World
 import net.minecraft.block.{ITileEntityProvider, Block}
 

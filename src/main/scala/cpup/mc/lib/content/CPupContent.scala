@@ -3,12 +3,11 @@ package cpup.mc.lib.content
 import cpw.mods.fml.common.registry.GameRegistry
 import cpup.mc.lib.{CPupModRef, CPupMod}
 import scala.collection.mutable
-import net.minecraft.item.{Item, ItemStack, ItemBlock}
+import net.minecraft.item.{ItemStack, ItemBlock}
 import cpw.mods.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
 import net.minecraftforge.oredict.{ShapelessOreRecipe, ShapedOreRecipe}
-import cpup.mc.lib.network.CPupMessage
 import net.minecraft.creativetab.CreativeTabs
-import net.minecraft.init.{Blocks, Items}
+import net.minecraft.init.Blocks
 
 trait CPupContent[MOD <: CPupMod[_ <: CPupModRef]] {
 	def mod: MOD

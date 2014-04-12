@@ -2,8 +2,7 @@ package cpup.mc.lib.content
 
 import net.minecraft.block.Block
 import cpup.mc.lib.{CPupModRef, CPupMod}
-import cpup.mc.lib.network.{BlockMessage, CPupMessage}
-import net.minecraft.creativetab.CreativeTabs
+import cpup.mc.lib.network.BlockMessage
 
 trait CPupBlock[MOD <: CPupMod[_ <: CPupModRef]] extends Block {
 	def mod: MOD

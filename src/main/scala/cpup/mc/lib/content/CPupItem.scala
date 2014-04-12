@@ -2,7 +2,6 @@ package cpup.mc.lib.content
 
 import net.minecraft.item.Item
 import cpup.mc.lib.{CPupModRef, CPupMod}
-import net.minecraft.creativetab.CreativeTabs
 
 trait CPupItem[MOD <: CPupMod[_ <: CPupModRef]] extends Item {
 	def mod: MOD

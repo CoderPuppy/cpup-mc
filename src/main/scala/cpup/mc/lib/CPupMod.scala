@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager
 import cpup.mc.lib.content.CPupContent
 import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.{FMLServerStartingEvent, FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
-import cpup.mc.lib.network.{CPupMessage, CPupNetwork}
+import cpup.mc.lib.network.CPupMessage
 
 trait CPupMod[REF <: CPupModRef] {
 	def ref: REF

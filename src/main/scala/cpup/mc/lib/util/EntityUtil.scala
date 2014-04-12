@@ -1,9 +1,8 @@
 package cpup.mc.lib.util
 
-import net.minecraft.entity.{EntityLivingBase, Entity}
+import net.minecraft.entity.Entity
 import net.minecraft.util.{MathHelper, MovingObjectPosition, AxisAlignedBB, Vec3}
 import java.util.List
-import net.minecraft.entity.item.EntityItemFrame
 import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.relauncher.Side
 

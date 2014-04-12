@@ -4,7 +4,6 @@ import net.minecraft.world.World
 import net.minecraft.block.Block
 import cpup.mc.lib.util.Direction
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.MathHelper
 
 case class BlockPos(world: World, x: Int, y: Int, z: Int) {
 	def chunkX = (x - x % 16) / 16

@@ -1,6 +1,6 @@
 package cpup.mc.lib.util
 
-import net.minecraft.util.{IIcon, ResourceLocation}
+import net.minecraft.util.IIcon
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import org.lwjgl.opengl.GL11
 import net.minecraft.client.Minecraft
