@@ -12,7 +12,18 @@ object EntityUtil {
 		val genData = e.getExtendedProperties(name)
 		genData match {
 			case data: D => Some(data)
-			case _ if genData == null => Option(default)
+			case _ if genData == null => {
+				val data = default
+				if(data == null) {
+					None
+				} else {
+					if(e.registerExtendedProperties(name, data)) {
+						Some(data)
+					} else {
+						None
+					}
+				}
+			}
 			case _ => None
 		}
 	}
