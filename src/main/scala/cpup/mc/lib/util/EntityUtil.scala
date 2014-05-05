@@ -17,7 +17,7 @@ object EntityUtil {
 				if(data == null) {
 					None
 				} else {
-					if(e.registerExtendedProperties(name, data)) {
+					if(e.registerExtendedProperties(name, data) == name) {
 						Some(data)
 					} else {
 						None
