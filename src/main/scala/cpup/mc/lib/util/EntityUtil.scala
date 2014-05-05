@@ -5,8 +5,18 @@ import net.minecraft.util.{MathHelper, MovingObjectPosition, AxisAlignedBB, Vec3
 import java.util.List
 import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.relauncher.Side
+import net.minecraftforge.common.IExtendedEntityProperties
 
 object EntityUtil {
+	def getExtendedData[D <: IExtendedEntityProperties](e: Entity, name: String, default: => D)(implicit manifest: Manifest[D]) = {
+		val genData = e.getExtendedProperties(name)
+		genData match {
+			case data: D => Some(data)
+			case _ if genData == null => Option(default)
+			case _ => None
+		}
+	}
+
 	def getPos(entity: Entity) = {
 		var y = entity.posY
 		if(FMLCommonHandler.instance.getEffectiveSide == Side.SERVER) {
