@@ -67,7 +67,7 @@ object EntityUtil {
 
 	def getMOPBlock(entity: Entity, reach: Double) = {
 		val pos = getPos(entity)
-		val farLook = VectorUtil.getFarLook(pos, getLook(entity), reach)
+		val farLook = VectorUtil.offset(pos, getLook(entity), reach)
 
 		entity.worldObj.func_147447_a(pos, farLook, false, false, true)
 	}
@@ -82,7 +82,7 @@ object EntityUtil {
 		}
 
 		val look = getLook(entity)
-		val farLook = VectorUtil.getFarLook(pos, look, reach)
+		val farLook = VectorUtil.offset(pos, look, reach)
 		var pointedEntity: Entity = null
 		var vec33: Vec3 = null
 		val f1: Float = 1.0F
