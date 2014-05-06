@@ -8,6 +8,27 @@ import cpw.mods.fml.relauncher.Side
 import net.minecraftforge.common.IExtendedEntityProperties
 
 object EntityUtil {
+	def wouldSuffocate(x: Double, y: Double, z: Double, width: Float, height: Float, eyeHeight: Double): Boolean = {
+		{
+			var i = 0
+			while(i < 8) {
+				val f: Float = (((i >> 0) % 2).asInstanceOf[Float] - 0.5F) * width * 0.8F
+				val f1: Float = (((i >> 1) % 2).asInstanceOf[Float] - 0.5F) * 0.1F
+				val f2: Float = (((i >> 2) % 2).asInstanceOf[Float] - 0.5F) * width * 0.8F
+				val j: Int = MathHelper.floor_double(x + f.asInstanceOf[Double])
+				val k: Int = MathHelper.floor_double(y + eyeHeight + f1.asInstanceOf[Double])
+				val l: Int = MathHelper.floor_double(z + f2.asInstanceOf[Double])
+				if(this.worldObj.getBlock(j, k, l).isNormalCube) {
+					return true
+				}
+				i += 1
+			}
+		}
+		return false
+	}
+	def wouldSuffocate(e: Entity, x: Double, y: Double, z: Double) = wouldSuffocate(x, y, z, e.width, e.height, e.getEyeHeight)
+	def wouldSuffocate(e: Entity) = wouldSuffocate(e.posX, e.posY, e.posZ, e.width, e.height, e.getEyeHeight)
+	
 	def getExtendedData[D <: IExtendedEntityProperties](e: Entity, name: String, default: => D)(implicit manifest: Manifest[D]) = {
 		val genData = e.getExtendedProperties(name)
 		genData match {
