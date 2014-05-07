@@ -13,7 +13,10 @@ import java.io.File
 trait CPupMod[REF <: CPupModRef] {
 	def ref: REF
 	def content: CPupContent[_ <: CPupMod[REF]] = null
-	var config: Configuration = null
+	var config = new Configuration(new File(new File(FMLCommonHandler.instance.getSide match {
+		case Side.CLIENT => Minecraft.getMinecraft.mcDataDir
+		case Side.SERVER => new File(".")
+	}, "config"), ref.modID))
 
 	final val logger = LogManager.getLogger(ref.modID)
 
@@ -25,10 +28,6 @@ trait CPupMod[REF <: CPupModRef] {
 
 	@EventHandler
 	def preInit(e: FMLPreInitializationEvent) {
-		config = new Configuration(new File(new File(FMLCommonHandler.instance.getSide match {
-			case Side.CLIENT => Minecraft.getMinecraft.mcDataDir
-			case Side.SERVER => new File(".")
-		}, "config"), ref.modID))
 		config.load
 
 		if(content != null) content.preInit(e)
