@@ -46,14 +46,14 @@ dependencies {
 	}
 }
 
+apply plugin: 'scala'
+dependencies.compile "org.scala-lang:scala-library:$versions.scala"
+
 apply plugin: 'forge'
 minecraft {
 	version = "$versions.minecraft-$versions.forge"
 	assetDir = 'eclipse/assets'
 }
-
-apply plugin: 'scala'
-dependencies.compile "org.scala-lang:scala-library:$versions.scala"
 
 apply plugin: 'maven'
 
