@@ -10,19 +10,15 @@ import net.minecraft.world.World
 
 object EntityUtil {
 	def wouldSuffocate(world: World, x: Double, y: Double, z: Double, width: Float, height: Float, eyeHeight: Double): Boolean = {
-		{
-			var i = 0
-			while(i < 8) {
-				val f: Float = (((i >> 0) % 2).asInstanceOf[Float] - 0.5F) * width * 0.8F
-				val f1: Float = (((i >> 1) % 2).asInstanceOf[Float] - 0.5F) * 0.1F
-				val f2: Float = (((i >> 2) % 2).asInstanceOf[Float] - 0.5F) * width * 0.8F
-				val j: Int = MathHelper.floor_double(x + f.asInstanceOf[Double])
-				val k: Int = MathHelper.floor_double(y + eyeHeight + f1.asInstanceOf[Double])
-				val l: Int = MathHelper.floor_double(z + f2.asInstanceOf[Double])
-				if(world.getBlock(j, k, l).isNormalCube) {
-					return true
-				}
-				i += 1
+		for(i <- 0 to 8) {
+			val f: Float = (((i >> 0) % 2).asInstanceOf[Float] - 0.5F) * width * 0.8F
+			val f1: Float = (((i >> 1) % 2).asInstanceOf[Float] - 0.5F) * 0.1F
+			val f2: Float = (((i >> 2) % 2).asInstanceOf[Float] - 0.5F) * width * 0.8F
+			val j: Int = MathHelper.floor_double(x + f.asInstanceOf[Double])
+			val k: Int = MathHelper.floor_double(y + eyeHeight + f1.asInstanceOf[Double])
+			val l: Int = MathHelper.floor_double(z + f2.asInstanceOf[Double])
+			if(world.getBlock(j, k, l).isNormalCube) {
+				return true
 			}
 		}
 		return false
