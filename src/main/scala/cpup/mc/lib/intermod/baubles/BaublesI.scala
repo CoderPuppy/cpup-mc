@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import baubles.api.BaublesApi
 import cpup.mc.lib.util.InvUtil
+import cpup.mc.lib.mod.CPupLib
 
 trait Interface extends ModLifecycleHandler {
 	def getItems(player: EntityPlayer): List[ItemStack]
@@ -19,4 +20,4 @@ object Disabled extends Interface {
 	def getItems(player: EntityPlayer) = List()
 }
 
-object BaublesI extends Module(ModLoadedCondition("Baubles"), Enabled, Disabled)
+object BaublesI extends Module(CPupLib, ModLoadedCondition("Baubles"), Enabled, Disabled)
