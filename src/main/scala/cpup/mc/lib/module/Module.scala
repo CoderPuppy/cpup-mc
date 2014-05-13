@@ -6,16 +6,22 @@ import cpw.mods.fml.common.event.{FMLServerStartingEvent, FMLPostInitializationE
 class Module[I <: ModLifecycleHandler](val mod: CPupMod[_ <: CPupModRef], dummy: => I, val impls: Module.Impl[_ <: I]*) extends ModLifecycleHandler {
 	val name: String = getClass.getSimpleName.replaceFirst("\\$$", "")
 
+	mod.logger.info(s"[$name] Loading")
 	val impl = impls.find((impl) => {
-		val default = impl.default
-		val configProp = mod.config.get(s"modules.$name", impl.name, default, s"Whether to enable the ${impl.name} implementation for $name (default: $default)")
-		val enabled = configProp.getBoolean(default)
+		val defaultConfig = impl.default
+		val enabledConfig = mod.config.get(
+			s"modules.$name",
+			impl.name,
+			defaultConfig,
+			s"Whether to enable the ${impl.name} implementation for $name (default: $defaultConfig)"
+		).getBoolean(defaultConfig)
+
 		mod.logger.info(s"[$name] Trying ${impl.name}")
-		mod.logger.info(s"[$name : ${impl.name}] -- ${if(enabled) "Enabled" else "Disabled"} in the config")
+		mod.logger.info(s"[$name : ${impl.name}] -- ${if(enabledConfig) "Enabled" else "Disabled"} in the config")
 		for(msg <- impl.canLoad.messages) {
 			mod.logger.info(s"[$name : ${impl.name}] -- $msg")
 		}
-		impl.canLoad.toBoolean && enabled && (try {
+		impl.canLoad.toBoolean && enabledConfig && (try {
 			impl.impl
 			mod.logger.info(s"[$name : ${impl.name}] Loaded")
 			true
