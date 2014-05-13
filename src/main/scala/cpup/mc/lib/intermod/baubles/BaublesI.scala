@@ -20,4 +20,7 @@ object Dummy extends Interface {
 	def getItems(player: EntityPlayer) = List()
 }
 
-object BaublesI extends Module(CPupLib, Module.modLoaded("Baubles"), Real, Dummy)
+object BaublesI extends Module[Interface](CPupLib,
+	Dummy,
+	Module.Impl(Module.modLoaded("Baubles"), Real)
+)

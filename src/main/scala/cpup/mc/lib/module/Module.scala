@@ -3,28 +3,29 @@ package cpup.mc.lib.module
 import cpup.mc.lib.{CPupModRef, CPupMod, ModLifecycleHandler}
 import cpw.mods.fml.common.event.{FMLServerStartingEvent, FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
 
-class Module[MOD <: ModLifecycleHandler](val mod: CPupMod[_ <: CPupModRef], val condition: TModuleCondition, real: => MOD, dummy: => MOD) extends ModLifecycleHandler {
-	var name = getClass.getSimpleName.replaceFirst("\\$$", "")
+class Module[I <: ModLifecycleHandler](val mod: CPupMod[_ <: CPupModRef], dummy: => I, val impls: Module.Impl[_ <: I]*) extends ModLifecycleHandler {
+	val name: String = getClass.getSimpleName.replaceFirst("\\$$", "")
 
-	val canLoad = condition.canLoad
-	mod.logger.info(s"[$name] Loading")
-	for(msg <- canLoad.messages) {
-		mod.logger.info(s"[$name] -- $msg")
-	}
-	val impl = if(canLoad.toBoolean) {
-		try {
-			mod.logger.info(s"[$name] Loading real implementation")
-			real
+	val impl = impls.find((impl) => {
+		mod.logger.info(s"[$name] Trying ${impl.name}")
+		for(msg <- impl.canLoad.messages) {
+			mod.logger.info(s"[$name : ${impl.name}] -- $msg")
+		}
+		impl.canLoad.toBoolean && (try {
+			impl.impl
+			mod.logger.info(s"[$name : ${impl.name}] Loaded")
+			true
 		} catch {
 			case e: Exception =>
-				mod.logger.info(s"[$name] Threw while loading, loading dummy implementation")
+				mod.logger.info(s"[$name : ${impl.name}] Threw while loading:")
 				e.printStackTrace
-				dummy
-		}
-	} else {
-		mod.logger.info(s"[$name] Condition not met, loading dummy implementation")
+				false
+		})
+	}).map(_.impl).getOrElse({
+		mod.logger.info(s"[$name] No implementations are loadable, using dummy implementation")
 		dummy
-	}
+	})
+
 	mod.logger.info(s"[$name] Loaded")
 
 	def get = impl
@@ -41,4 +42,16 @@ object Module {
 	def not(condition: TModuleCondition) = NotCondition(condition)
 	def modLoaded(modid: String) = ModLoadedCondition(modid)
 	def fn(name: String, fn: => Boolean) = FunctionCondition(name, fn)
+	def yes(msg: String = "Yes") = YesCondition(msg)
+	def no(msg: String = "No") = NoCondition(msg)
+
+	class Impl[I](val condition: TModuleCondition, _impl: => I)(implicit val manifest: Manifest[I]) {
+		val name = manifest.runtimeClass.getSimpleName.replaceAll("\\$$", "")
+		val canLoad = condition.canLoad
+		lazy val impl = _impl
+	}
+
+	object Impl {
+		def apply[I](condition: TModuleCondition, impl: => I)(implicit manifest: Manifest[I]) = new Impl(condition, impl)
+	}
 }
