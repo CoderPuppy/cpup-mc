@@ -17,6 +17,7 @@ trait CPupMod[REF <: CPupModRef] {
 		case Side.CLIENT => Minecraft.getMinecraft.mcDataDir
 		case Side.SERVER => new File(".")
 	}, "config"), ref.modID + ".cfg"))
+	config.load
 
 	final val logger = LogManager.getLogger(ref.modID)
 
@@ -28,7 +29,7 @@ trait CPupMod[REF <: CPupModRef] {
 
 	@EventHandler
 	def preInit(e: FMLPreInitializationEvent) {
-		config.load
+		//config.load
 
 		if(content != null) content.preInit(e)
 
