@@ -40,4 +40,5 @@ object Module {
 	def or(conditions: TModuleCondition*) = OrCondition(conditions: _*)
 	def not(condition: TModuleCondition) = NotCondition(condition)
 	def modLoaded(modid: String) = ModLoadedCondition(modid)
+	def fn(name: String, fn: => Boolean) = FunctionCondition(name, fn)
 }

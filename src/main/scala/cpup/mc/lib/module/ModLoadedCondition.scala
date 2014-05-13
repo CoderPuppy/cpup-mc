@@ -11,5 +11,5 @@ case class ModLoadedCondition(modid: String) extends TModuleCondition {
 }
 
 case class ModLoadedMessage(modid: String, loaded: Boolean) extends CanLoad.Message {
-	override def toString = s"$modid ${if(loaded) { "is" } else { "isn't" }} loaded"
+	override def toString = s"$modid ${if(loaded) "is" else "isn't"} loaded"
 }
