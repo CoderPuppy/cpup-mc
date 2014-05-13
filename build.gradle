@@ -5,7 +5,7 @@ ext {
 		version: 'dev',
 		dependencies: [
 			'cpup.lib:cpup-lib:dev',
-			files('Baubles-api.zip')
+			files('Baubles-deobf.zip')
 		]
 	]
 
@@ -77,8 +77,8 @@ version = info.version
 
 import de.undercouch.gradle.tasks.download.Download
 task downloadBaubles(type: Download) {
-	src 'https://dl.dropboxusercontent.com/u/47135879/Baubles-1.7.2-1.0.0.12-api.zip'
-	dest 'Baubles-api.zip'
+	src 'https://dl.dropboxusercontent.com/u/47135879/Baubles-deobf-1.7.2-1.0.0.12.jar'
+	dest 'Baubles-deobf.zip'
 }
 
 compileScala.dependsOn(downloadBaubles)
