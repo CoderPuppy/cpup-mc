@@ -11,7 +11,7 @@ class Module[I <: ModLifecycleHandler](val mod: CPupMod[_ <: CPupModRef], dummy:
 		val configProp = mod.config.get(s"modules.$name", impl.name, default, s"Whether to enable the ${impl.name} implementation for $name (default: $default)")
 		val enabled = configProp.getBoolean(default)
 		mod.logger.info(s"[$name] Trying ${impl.name}")
-		mod.logger.info(s"[$name: ${impl.name}] -- ${if(enabled) "Enabled" else "Disabled"} in the config")
+		mod.logger.info(s"[$name : ${impl.name}] -- ${if(enabled) "Enabled" else "Disabled"} in the config")
 		for(msg <- impl.canLoad.messages) {
 			mod.logger.info(s"[$name : ${impl.name}] -- $msg")
 		}
