@@ -16,7 +16,7 @@ trait CPupMod[REF <: CPupModRef] {
 	var config = new Configuration(new File(new File(FMLCommonHandler.instance.getSide match {
 		case Side.CLIENT => Minecraft.getMinecraft.mcDataDir
 		case Side.SERVER => new File(".")
-	}, "config"), ref.modID))
+	}, "config"), ref.modID + ".cfg"))
 
 	final val logger = LogManager.getLogger(ref.modID)
 
