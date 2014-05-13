@@ -8,6 +8,7 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.nbt.NBTTagCompound
 import cpup.mc.lib.inventory.EmptyInventory
 import net.minecraft.entity.player.EntityPlayer
+import cpup.mc.lib.intermod.baubles.BaublesI
 
 case class PlayerTarget(name: String) extends TTarget with TTargetWrapper {
 	def mod = CPupLib
@@ -23,7 +24,12 @@ case class PlayerTarget(name: String) extends TTarget with TTargetWrapper {
 	}
 
 	override def getActiveItems = entity.map((player) =>
-		player.inventory.armorInventory ++ player.inventory.mainInventory
+		// TODO: TCon?
+		Array(
+			player.inventory.armorInventory,
+			player.inventory.mainInventory,
+			BaublesI.get.getItems(player).toArray
+		).flatten
 	).getOrElse(Array())
 	override def getActiveInventory = entity.map(_.inventory).getOrElse(EmptyInventory)
 
