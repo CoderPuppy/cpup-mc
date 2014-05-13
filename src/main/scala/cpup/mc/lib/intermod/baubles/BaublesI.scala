@@ -22,5 +22,5 @@ object Dummy extends Interface {
 
 object BaublesI extends Module[Interface](CPupLib,
 	Dummy,
-	Module.Impl(Module.modLoaded("Baubles"), Real)
+	Module.Impl(Module.modLoaded("Baubles"), true, Real)
 )

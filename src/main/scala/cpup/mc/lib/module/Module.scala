@@ -7,11 +7,15 @@ class Module[I <: ModLifecycleHandler](val mod: CPupMod[_ <: CPupModRef], dummy:
 	val name: String = getClass.getSimpleName.replaceFirst("\\$$", "")
 
 	val impl = impls.find((impl) => {
+		val default = impl.default
+		val configProp = mod.config.get(s"modules.$name", impl.name, default, s"Whether to enable the ${impl.name} implementation for $name (default: $default)")
+		val enabled = configProp.getBoolean(default)
 		mod.logger.info(s"[$name] Trying ${impl.name}")
+		mod.logger.info(s"[$name: ${impl.name}] -- ${if(enabled) "Enabled" else "Disabled"} in the config")
 		for(msg <- impl.canLoad.messages) {
 			mod.logger.info(s"[$name : ${impl.name}] -- $msg")
 		}
-		impl.canLoad.toBoolean && (try {
+		impl.canLoad.toBoolean && enabled && (try {
 			impl.impl
 			mod.logger.info(s"[$name : ${impl.name}] Loaded")
 			true
@@ -45,13 +49,15 @@ object Module {
 	def yes(msg: String = "Yes") = YesCondition(msg)
 	def no(msg: String = "No") = NoCondition(msg)
 
-	class Impl[I](val condition: TModuleCondition, _impl: => I)(implicit val manifest: Manifest[I]) {
+	class Impl[I](val condition: TModuleCondition, val default: Boolean, _impl: => I)(implicit val manifest: Manifest[I]) {
 		val name = manifest.runtimeClass.getSimpleName.replaceAll("\\$$", "")
 		val canLoad = condition.canLoad
 		lazy val impl = _impl
 	}
 
 	object Impl {
-		def apply[I](condition: TModuleCondition, impl: => I)(implicit manifest: Manifest[I]) = new Impl(condition, impl)
+		def apply[I](condition: TModuleCondition, default: Boolean, impl: => I)(implicit manifest: Manifest[I]) = {
+			new Impl(condition, default, impl)
+		}
 	}
 }
