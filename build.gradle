@@ -4,7 +4,8 @@ ext {
 		group: 'cpup.mc.lib',
 		version: 'dev',
 		dependencies: [
-			'cpup.lib:cpup-lib:dev'
+			'cpup.lib:cpup-lib:dev',
+			files('Baubles-api.zip')
 		]
 	]
 
@@ -30,6 +31,7 @@ buildscript {
 
 	dependencies {
 		classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+		classpath 'de.undercouch:gradle-download-task:1.0'
 	}
 }
 
@@ -72,3 +74,13 @@ processResources {
 archivesBaseName = info.name
 group = info.group
 version = info.version
+
+import de.undercouch.gradle.tasks.download.Download
+task downloadBaubles(type: Download) {
+	src 'https://dl.dropboxusercontent.com/u/47135879/Baubles-1.7.2-1.0.0.12-api.zip'
+	dest 'Baubles-api.zip'
+}
+
+compileScala.dependsOn(downloadBaubles)
+compileJava.dependsOn(downloadBaubles)
+build.dependsOn(downloadBaubles)
