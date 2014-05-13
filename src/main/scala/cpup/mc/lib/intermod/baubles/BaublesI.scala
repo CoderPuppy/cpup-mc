@@ -12,12 +12,12 @@ trait Interface extends ModLifecycleHandler {
 	def getItems(player: EntityPlayer): List[ItemStack]
 }
 
-object Enabled extends Interface {
+object Real extends Interface {
 	def getItems(player: EntityPlayer) = InvUtil.getItems(BaublesApi.getBaubles(player))
 }
 
-object Disabled extends Interface {
+object Dummy extends Interface {
 	def getItems(player: EntityPlayer) = List()
 }
 
-object BaublesI extends Module(CPupLib, ModLoadedCondition("Baubles"), Enabled, Disabled)
+object BaublesI extends Module(CPupLib, Module.modLoaded("Baubles"), Real, Dummy)
