@@ -9,10 +9,13 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.Entity
 import net.minecraft.block.Block
 import cpup.mc.lib.util.pos.BlockPos
+import cpup.mc.lib.intermod.baubles.BaublesI
 
 @Mod(modid = Ref.modID, modLanguage = "scala")
 object CPupLib extends CPupMod[TRef] {
 	def ref = Ref
+
+	registerLifecycleHandler(BaublesI)
 
 	@EventHandler
 	override def preInit(e: FMLPreInitializationEvent) {
