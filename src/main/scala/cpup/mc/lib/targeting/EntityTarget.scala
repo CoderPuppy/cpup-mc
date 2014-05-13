@@ -13,6 +13,10 @@ import net.minecraft.server.MinecraftServer
 case class EntityTarget(entity: Entity) extends TTarget {
 	def mod = CPupLib
 
+	if(entity == null) {
+		throw new NullPointerException("entity cannot be null")
+	}
+
 	override def targetType = EntityTarget
 
 	override def world = Some(entity.worldObj)
