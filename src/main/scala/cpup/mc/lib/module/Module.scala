@@ -4,20 +4,22 @@ import cpup.mc.lib.{CPupModRef, CPupMod, ModLifecycleHandler}
 import cpw.mods.fml.common.event.{FMLServerStartingEvent, FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
 
 class Module[MOD <: ModLifecycleHandler](val mod: CPupMod[_ <: CPupModRef], val condition: TModuleCondition, enabled: => MOD, disabled: => MOD) extends ModLifecycleHandler {
+	var name = getClass.getSimpleName.replaceFirst("\\$$", "")
+
 	val impl = if(condition.canLoad) {
 		try {
-			mod.logger.info(s"[${getClass.getSimpleName}] Loading")
+			mod.logger.info(s"[$name] Loading")
 			val res = enabled
-			mod.logger.info(s"[${getClass.getSimpleName}] Loaded")
+			mod.logger.info(s"[$name] Loaded")
 			res
 		} catch {
 			case e: Exception =>
-				mod.logger.info(s"[${getClass.getSimpleName}] Threw while loading")
+				mod.logger.info(s"[$name] Threw while loading")
 				e.printStackTrace
 				disabled
 		}
 	} else {
-		mod.logger.info(s"[${getClass.getSimpleName}] Condition not met, not loading")
+		mod.logger.info(s"[$name] Condition not met, not loading")
 		disabled
 	}
 
