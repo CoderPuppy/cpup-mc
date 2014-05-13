@@ -9,15 +9,17 @@ object TargetingRegistry {
 		wrappers(gCla.asInstanceOf[Class[Any]]) = wrapper.asInstanceOf[Any => TTarget]
 	}
 
-	def wrap[T](obj: T): Option[TTarget] = {
-		var cla: Class[Any] = obj.getClass.asInstanceOf[Class[Any]]
-		while(cla.getSuperclass != null) {
+	def wrap(obj: Any): Option[TTarget] = {
+		var cla = obj.getClass.asInstanceOf[Class[Any]]
+		while(true) {
 			if(wrappers.contains(cla)) {
 				return Some(wrappers(cla)(obj))
+			} else if(cla.getSuperclass == null) {
+				return None
 			} else {
 				cla = cla.getSuperclass
 			}
 		}
-		None
+		return None
 	}
 }
