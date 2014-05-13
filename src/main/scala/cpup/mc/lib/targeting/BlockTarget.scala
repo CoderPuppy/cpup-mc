@@ -34,8 +34,8 @@ case class BlockTarget(pos: BlockPos) extends TTarget {
 		nbt.setInteger("z", pos.z)
 	}
 
-	override def getActiveItems = Array()
-	override def getActiveInventory = EmptyInventory
+	override def activeItems = Array()
+	override def inventory = EmptyInventory
 }
 
 object BlockTarget extends TTargetType {

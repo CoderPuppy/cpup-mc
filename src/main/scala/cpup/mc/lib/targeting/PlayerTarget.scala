@@ -23,15 +23,15 @@ case class PlayerTarget(name: String) extends TTarget with TTargetWrapper {
 		case _ => false
 	}
 
-	override def getActiveItems = entity.map((player) =>
+	override def activeItems = entity.map((player) =>
 		// TODO: TCon?
 		Array(
 			player.inventory.armorInventory,
-			player.inventory.mainInventory,
+			Array(player.getCurrentEquippedItem),
 			BaublesI.get.getItems(player).toArray
 		).flatten
 	).getOrElse(Array())
-	override def getActiveInventory = entity.map(_.inventory).getOrElse(EmptyInventory)
+	override def inventory = entity.map(_.inventory).getOrElse(EmptyInventory)
 
 	override def writeToNBT(nbt: NBTTagCompound) {
 		nbt.setString("name", name)

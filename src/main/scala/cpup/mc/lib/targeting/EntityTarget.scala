@@ -32,11 +32,11 @@ case class EntityTarget(entity: Entity) extends TTarget {
 	override def ownedTargets(typeNoun: TTargetFilter[_ <: Entity, _ <: Block]) = List()
 	override def owner = null // TODO: owner
 
-	override def getActiveItems = entity.getLastActiveItems match {
+	override def activeItems = entity.getLastActiveItems match {
 		case null => Array()
 		case items => items
 	}
-	override def getActiveInventory = ???
+	override def inventory = ???
 
 	override def writeToNBT(nbt: NBTTagCompound) {
 		nbt.setInteger("dim", world.get.provider.dimensionId)

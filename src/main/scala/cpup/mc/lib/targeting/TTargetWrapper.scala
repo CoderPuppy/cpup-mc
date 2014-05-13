@@ -16,8 +16,8 @@ trait TTargetWrapper extends TTarget {
 	override def y = wrapped.flatMap(_.y)
 	override def z = wrapped.flatMap(_.z)
 
-	override def getActiveInventory = wrapped.map(_.getActiveInventory).getOrElse(EmptyInventory)
-	override def getActiveItems = wrapped.map(_.getActiveItems).getOrElse(Array())
+	override def inventory = wrapped.map(_.inventory).getOrElse(EmptyInventory)
+	override def activeItems = wrapped.map(_.activeItems).getOrElse(Array())
 
 	override def owner = wrapped.flatMap(_.owner)
 	override def ownedTargets(filter: TTargetFilter[_ <: Entity, _ <: Block]) = wrapped.map(_.ownedTargets(filter)).getOrElse(List())

@@ -26,8 +26,8 @@ trait TTarget {
 	def ownedTargets(filter: TTargetFilter[_ <: Entity, _ <: Block]): List[TTarget]
 	def owner: Option[TTarget]
 
-	def getActiveItems: Array[ItemStack]
-	def getActiveInventory: IInventory
+	def activeItems: Array[ItemStack]
+	def inventory: IInventory
 
 	def sameObj(other: TTarget) = obj.exists(_ match {
 		case Left(entity) =>
