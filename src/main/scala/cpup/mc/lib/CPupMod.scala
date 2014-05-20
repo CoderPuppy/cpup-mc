@@ -9,8 +9,11 @@ import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.relauncher.Side
 import net.minecraft.client.Minecraft
 import java.io.File
+import cpup.lib.module.Module
+import cpup.mc.lib.logging.JCLForSLF4JLogger
+import org.slf4j.Logger
 
-trait CPupMod[REF <: CPupModRef] {
+trait CPupMod[REF <: CPupModRef] extends Module[CPupMod[REF]] with ModLifecycleHandler {
 	def ref: REF
 	def content: CPupContent[_ <: CPupMod[REF]] = null
 	var config = new Configuration(new File(new File(FMLCommonHandler.instance.getSide match {
@@ -19,7 +22,7 @@ trait CPupMod[REF <: CPupModRef] {
 	}, "config"), ref.modID + ".cfg"))
 	config.load
 
-	final val logger = LogManager.getLogger(ref.modID)
+	override final val logger: Logger = new JCLForSLF4JLogger(LogManager.getLogger(ref.modID))
 
 	protected var _lifecycleHandlers = List[ModLifecycleHandler]()
 	def registerLifecycleHandler(handler: ModLifecycleHandler) = {
@@ -27,8 +30,10 @@ trait CPupMod[REF <: CPupModRef] {
 		this
 	}
 
+	def get = this
+
 	@EventHandler
-	def preInit(e: FMLPreInitializationEvent) {
+	override def preInit(e: FMLPreInitializationEvent) {
 		//config.load
 
 		if(content != null) content.preInit(e)
@@ -37,14 +42,14 @@ trait CPupMod[REF <: CPupModRef] {
 	}
 
 	@EventHandler
-	def init(e: FMLInitializationEvent) {
+	override def init(e: FMLInitializationEvent) {
 		if(content != null) content.init(e)
 
 		_lifecycleHandlers.foreach(_.init(e))
 	}
 
 	@EventHandler
-	def postInit(e: FMLPostInitializationEvent) {
+	override def postInit(e: FMLPostInitializationEvent) {
 		if(content != null) content.postInit(e)
 
 		_lifecycleHandlers.foreach(_.postInit(e))
@@ -53,7 +58,7 @@ trait CPupMod[REF <: CPupModRef] {
 	}
 
 	@EventHandler
-	def serverStarting(e: FMLServerStartingEvent) {
+	override def serverStarting(e: FMLServerStartingEvent) {
 		_lifecycleHandlers.foreach(_.serverStarting(e))
 	}
 }

@@ -1,6 +1,7 @@
 package cpup.mc.lib.module
 
 import cpw.mods.fml.common.Loader
+import cpup.lib.module.{CanLoad, TModuleCondition}
 
 case class ModLoadedCondition(modid: String) extends TModuleCondition {
 	override def canLoad = if(Loader.isModLoaded(modid)) {

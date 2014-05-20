@@ -13,8 +13,7 @@ object WorldSavedDataUtil {
 				world.setItemData(id, data)
 			} catch {
 				case e: Exception =>
-					CPupLib.logger.error(e)
-					CPupLib.logger.error(e.getStackTraceString)
+					CPupLib.logger.error("Error while creating WorldSavedData for {}", id: Any, e)
 			}
 		}
 		data
