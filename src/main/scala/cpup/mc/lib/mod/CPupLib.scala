@@ -15,7 +15,7 @@ import cpup.mc.lib.intermod.baubles.BaublesI
 object CPupLib extends CPupMod[TRef] {
 	def ref = Ref
 
-	registerLifecycleHandler(BaublesI)
+	loadModule(BaublesI)
 
 	@EventHandler
 	override def preInit(e: FMLPreInitializationEvent) {

@@ -30,6 +30,12 @@ trait CPupMod[REF <: CPupModRef] extends Module[CPupMod[REF]] with ModLifecycleH
 		this
 	}
 
+	def loadModule[M <: Module[_] with ModLifecycleHandler](module: M) = {
+		registerLifecycleHandler(module)
+		module.load
+		this
+	}
+
 	def get = this
 
 	@EventHandler
