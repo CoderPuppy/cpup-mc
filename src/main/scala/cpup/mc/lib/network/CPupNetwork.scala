@@ -18,7 +18,7 @@ import cpup.mc.lib.util.pos.BlockPos
 import cpup.mc.lib.content.CPupBlock
 
 @ChannelHandler.Sharable
-class CPupNetwork[MOD <: CPupMod[_ <: CPupModRef]] extends MessageToMessageCodec[FMLProxyPacket, CPupMessage[MOD]] with ModLifecycleHandler {
+trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef]] extends MessageToMessageCodec[FMLProxyPacket, CPupMessage[MOD]] with ModLifecycleHandler {
 	def mod: MOD
 
 	var channels: util.EnumMap[Side, FMLEmbeddedChannel] = null
