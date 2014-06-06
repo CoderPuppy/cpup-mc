@@ -18,7 +18,7 @@ import cpup.mc.lib.util.pos.BlockPos
 import cpup.mc.lib.content.CPupBlock
 
 @ChannelHandler.Sharable
-trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef]] extends MessageToMessageCodec[FMLProxyPacket, CPupMessage[MOD]] with ModLifecycleHandler {
+class CPupNetwork[MOD <: CPupMod[_ <: CPupModRef]] extends MessageToMessageCodec[FMLProxyPacket, CPupMessage[MOD]] with ModLifecycleHandler {
 	def mod: MOD
 
 	var channels: util.EnumMap[Side, FMLEmbeddedChannel] = null
@@ -43,14 +43,17 @@ trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef]] extends MessageToMessageCodec
 	override def postInit(e: FMLPostInitializationEvent) { finish }
 
 	def handleMessage(msg: CPupMessage[MOD], player: EntityPlayer) {
-		if(msg.isInstanceOf[BlockMessage[MOD]]) {
-			val bMsg = msg.asInstanceOf[BlockMessage[MOD]]
-			val pos = BlockPos(player.worldObj, bMsg.x, bMsg.y, bMsg.z)
-			val block = pos.block
+		msg match {
+			case msg: BlockMessage[MOD] =>
+				val pos = BlockPos(player.worldObj, msg.x, msg.y, msg.z)
+				val block = pos.block
 
-			if(block.isInstanceOf[CPupBlock[MOD]]) {
-				block.asInstanceOf[CPupBlock[MOD]].handleMessage(bMsg)
-			}
+				block match {
+					case block: CPupBlock[MOD] =>
+						block.handleMessage(msg)
+					case _ =>
+				}
+			case _ =>
 		}
 	}
 
