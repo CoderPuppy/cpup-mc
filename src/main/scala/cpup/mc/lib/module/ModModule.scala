@@ -11,4 +11,3 @@ trait ModModule[I <: ModLifecycleHandler] extends Module[I] with ModLifecycleHan
 
 	override def serverStarting(e: FMLServerStartingEvent) { get.serverStarting(e) }
 }
-
