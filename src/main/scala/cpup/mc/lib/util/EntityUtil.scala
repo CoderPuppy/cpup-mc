@@ -53,7 +53,7 @@ object EntityUtil {
 		if(FMLCommonHandler.instance.getEffectiveSide == Side.SERVER) {
 			y += 1.6200000047683716 // TODO: Figure out why I need this
 		}
-		entity.worldObj.getWorldVec3Pool.getVecFromPool(entity.posX, y, entity.posZ)
+		Vec3.createVectorHelper(entity.posX, y, entity.posZ)
 	}
 
 	def getLook(entity: Entity) = {
@@ -61,7 +61,7 @@ object EntityUtil {
 		val f2 = MathHelper.sin(-entity.rotationYaw * 0.017453292F - Math.PI.asInstanceOf[Float])
 		val f3 = -MathHelper.cos(-entity.rotationPitch * 0.017453292F)
 		val f4 = MathHelper.sin(-entity.rotationPitch * 0.017453292F)
-		entity.worldObj.getWorldVec3Pool.getVecFromPool((f2 * f3).asInstanceOf[Double], f4.asInstanceOf[Double], (f1 * f3).asInstanceOf[Double])
+		Vec3.createVectorHelper((f2 * f3).asInstanceOf[Double], f4.asInstanceOf[Double], (f1 * f3).asInstanceOf[Double])
 	}
 
 	def getMOPBlock(entity: Entity, reach: Double) = {

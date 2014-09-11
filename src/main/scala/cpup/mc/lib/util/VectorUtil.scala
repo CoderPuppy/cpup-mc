@@ -9,9 +9,8 @@ object VectorUtil {
 		pos.addVector(look.xCoord * dist, look.yCoord * dist, look.zCoord * dist)
 	}
 
-	def negate(vec: Vec3) = vec.myVec3LocalPool.getVecFromPool(-vec.xCoord, -vec.yCoord, -vec.zCoord)
+	def negate(vec: Vec3) = Vec3.createVectorHelper(-vec.xCoord, -vec.yCoord, -vec.zCoord)
 
-	def get(world: World, x: Double, y: Double, z: Double) = world.getWorldVec3Pool.getVecFromPool(x, y, z)
 	def offset(origin: Vec3, dir: Direction, amt: Double = 1) = origin.addVector(
 		dir.forgeDir.offsetX * amt,
 		dir.forgeDir.offsetY * amt,
