@@ -4,15 +4,14 @@ ext {
 		group: 'cpup.mc.lib',
 		version: 'dev',
 		dependencies: [
-			'cpup.lib:cpup-lib:dev',
-			files('Baubles-deobf.zip')
+			'cpup.lib:cpup-lib:dev'
 		]
 	]
 
 	versions = [
-		scala: '2.10.2',
-		minecraft: '1.7.2',
-		forge: '10.12.1.1060'
+		scala: '2.11.1',
+		minecraft: '1.7.10',
+		forge: '10.13.0.1208'
 	]
 }
 
@@ -30,8 +29,7 @@ buildscript {
 	}
 
 	dependencies {
-		classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-		classpath 'de.undercouch:gradle-download-task:1.0'
+		classpath 'net.minecraftforge.gradle:ForgeGradle:1.3-SNAPSHOT'
 	}
 }
 
@@ -49,7 +47,9 @@ dependencies {
 }
 
 apply plugin: 'scala'
+dependencies.compile "org.scala-lang:scala-compiler:$versions.scala"
 dependencies.compile "org.scala-lang:scala-library:$versions.scala"
+dependencies.compile "org.scala-lang:scala-reflect:$versions.scala"
 
 apply plugin: 'forge'
 minecraft {
@@ -74,13 +74,3 @@ processResources {
 archivesBaseName = info.name
 group = info.group
 version = info.version
-
-import de.undercouch.gradle.tasks.download.Download
-task downloadBaubles(type: Download) {
-	src 'https://dl.dropboxusercontent.com/u/47135879/Baubles-deobf-1.7.2-1.0.0.12.jar'
-	dest 'Baubles-deobf.zip'
-}
-
-compileScala.dependsOn(downloadBaubles)
-compileJava.dependsOn(downloadBaubles)
-build.dependsOn(downloadBaubles)
