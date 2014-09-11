@@ -19,7 +19,7 @@ case class PlayerTarget(name: String) extends TTarget with TTargetWrapper {
 
 	override def isValid = FMLCommonHandler.instance.getEffectiveSide match {
 		case Side.CLIENT => Minecraft.getMinecraft.thePlayer.getCommandSenderName == name
-		case Side.SERVER => MinecraftServer.getServer.getConfigurationManager.getPlayerForUsername(name) != null
+		case Side.SERVER => MinecraftServer.getServer.getConfigurationManager.func_152612_a(name) != null
 		case _ => false
 	}
 
@@ -47,7 +47,7 @@ case class PlayerTarget(name: String) extends TTarget with TTargetWrapper {
 			Some(player)
 
 		case Side.SERVER =>
-			Some(MinecraftServer.getServer.getConfigurationManager.getPlayerForUsername(name))
+			Some(MinecraftServer.getServer.getConfigurationManager.func_152612_a(name))
 
 		case _ => None
 	}).map(EntityTarget(_))
