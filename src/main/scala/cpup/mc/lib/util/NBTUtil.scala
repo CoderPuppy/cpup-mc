@@ -14,10 +14,10 @@ object NBTUtil {
 		list.toList
 	}
 
-	def writeList(list: List[NBTBase]) = {
+	def writeList(list: Seq[NBTBase]) = {
 		val listNBT = new NBTTagList
 
-		list.foreach(listNBT.appendTag(_))
+		list.foreach(listNBT.appendTag)
 
 		listNBT
 	}
