@@ -40,4 +40,17 @@ object SerializationRegistry {
 			res
 		case _ => throw new ClassCastException("it's not serializable")
 	}
+
+	// Load some serializations
+	MapSerialization
+	SeqSerialization
+
+	StringSerialization
+
+	DoubleSerialization
+	ShortSerialization
+	FloatSerialization
+	LongSerialization
+	ByteSerialization
+	IntSerialization
 }
