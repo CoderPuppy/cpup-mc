@@ -2,10 +2,11 @@ package cpup.mc.lib.util.serializing
 
 import net.minecraft.nbt.NBTBase
 
-trait SerializableType[NBT <: NBTBase] {
+trait SerializableType[T, NBT <: NBTBase] {
 	def id: String
-	def cla: Class[_ <: Serializable[_ <: NBT]]
-	def nbtClass: Class[_ <: NBT]
+	def cla: Class[_ <: T]
 
-	def readFromNBT(nbt: NBT): Serializable[NBT]
+	def nbtClass: Class[_ <: NBT]
+	def writeToNBT(data: T): NBT
+	def readFromNBT(nbt: NBT): T
 }

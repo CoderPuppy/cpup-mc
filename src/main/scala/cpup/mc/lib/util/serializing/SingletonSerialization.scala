@@ -1,29 +1,16 @@
 package cpup.mc.lib.util.serializing
 
-import net.minecraft.nbt.NBTTagString
-import cpup.mc.lib.mod.CPupLib
+import net.minecraft.nbt.NBTTagByte
 
-object SingletonSerialization extends SerializableType[NBTTagString] {
-	def mod = CPupLib
+object SingletonSerialization {
+	def register[T](singleton: T, _id: String) {
+		SerializationRegistry.registerType(new SerializableType[T, NBTTagByte] {
+			override def id = _id
+			override def cla = singleton.getClass
 
-	override def id = s"${mod.ref.modID}:singleton"
-	override def cla = classOf[TEntry]
-
-	private var _entries = Map[String, TEntry]()
-
-	override def nbtClass = classOf[NBTTagString]
-	override def readFromNBT(nbt: NBTTagString) = _entries(nbt.func_150285_a_)
-
-	trait TEntry extends Serializable[NBTTagString] {
-		def id: String
-
-		override def typ = SingletonSerialization
-		override def writeToNBT = new NBTTagString(id)
-	}
-
-	class Entry(final val id: String) extends TEntry
-
-	def register(entry: TEntry) {
-		_entries += ((entry.id, entry))
+			override def nbtClass = classOf[NBTTagByte]
+			override def writeToNBT(data: T) = new NBTTagByte(0)
+			override def readFromNBT(nbt: NBTTagByte) = singleton
+		})
 	}
 }
