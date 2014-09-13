@@ -3,6 +3,7 @@ package cpup.mc.lib.util.serializing
 import net.minecraft.nbt.{NBTBase, NBTTagCompound}
 import scala.collection.mutable
 import cpup.mc.lib.mod.CPupLib
+import scala.collection.mutable.ListBuffer
 
 object SerializationRegistry {
 	private def mod = CPupLib
@@ -15,21 +16,28 @@ object SerializationRegistry {
 		_classes(typ.cla) = typ.asInstanceOf[SerializableType[Any, NBTBase]]
 	}
 
-	def findType(_cla: Class[_]): SerializableType[Any, NBTBase] = {
+	private def getClasses(_cla: Class[_]): List[Class[_]] = {
 		var cla = _cla
+		val classes = new ListBuffer[Class[_]]
 		while(cla != null) {
-			if(_classes.contains(cla))
-				return _classes(cla)
+			classes += cla
+			classes ++= cla.getClasses.flatMap(getClasses)
 			cla = cla.getSuperclass
 		}
-		null
+		classes.toList
+	}
+
+	def findType(cla: Class[_]): SerializableType[Any, NBTBase] = {
+		val classes = getClasses(cla)
+		mod.logger.info("{}: {}", cla: Any, classes)
+		classes.find(_classes.contains).map(_classes(_)).getOrElse(null)
 	}
 
 	def readFromNBT[T](nbt: NBTTagCompound)(implicit manifest: Manifest[T]): T = {
 		val id = nbt.getString("id")
 		val data = nbt.getTag("data")
 		if(!_types.contains(id)) {
-			mod.logger.info("no such type: {} {}", id: Any, _types)
+			if(id != "") mod.logger.info("no such type: {} {}", id: Any, _types)
 			return null.asInstanceOf[T]
 		}
 		val typ = _types(id)
@@ -54,7 +62,7 @@ object SerializationRegistry {
 			res.setString("id", typ.id)
 			res.setTag("data", typ.writeToNBT(data))
 			res
-		case _ => throw new ClassCastException("it's not serializable")
+		case _ => throw new ClassCastException(s"it's not serializable: ${data.toString}")
 	}
 
 	// Load some serializations
