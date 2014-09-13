@@ -6,7 +6,7 @@ import cpup.mc.lib.util.NBTUtil
 
 object SeqSerialization extends SerializableType[Seq[Any], NBTTagList] {
 	def mod = CPupLib
-	override def id = s"${mod.ref.modID}:list"
+	override def id = s"${mod.ref.modID}:seq"
 	override def cla = classOf[Seq[Any]]
 
 	override def nbtClass = classOf[NBTTagList]
