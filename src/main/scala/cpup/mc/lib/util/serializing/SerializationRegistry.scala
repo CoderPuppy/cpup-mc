@@ -24,14 +24,11 @@ object SerializationRegistry {
 			classes ++= cla.getClasses.flatMap(getClasses)
 			cla = cla.getSuperclass
 		}
+		mod.logger.info("{}: {}", cla: Any, classes)
 		classes.toList
 	}
 
-	def findType(cla: Class[_]): SerializableType[Any, NBTBase] = {
-		val classes = getClasses(cla)
-		mod.logger.info("{}: {}", cla: Any, classes)
-		classes.find(_classes.contains).map(_classes(_)).getOrElse(null)
-	}
+	def findType(cla: Class[_]): SerializableType[Any, NBTBase] = getClasses(cla).find(_classes.contains).map(_classes(_)).getOrElse(null)
 
 	def readFromNBT[T](nbt: NBTTagCompound)(implicit manifest: Manifest[T]): T = {
 		val id = nbt.getString("id")
