@@ -21,7 +21,7 @@ object SerializationRegistry {
 		val classes = new ListBuffer[Class[_]]
 		while(cla != null) {
 			classes += cla
-			classes ++= cla.getClasses.flatMap(getClasses)
+			classes ++= cla.getInterfaces.flatMap(getClasses)
 			cla = cla.getSuperclass
 		}
 		mod.logger.info("{}: {}", cla: Any, classes)
