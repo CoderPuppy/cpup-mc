@@ -24,7 +24,7 @@ object SerializationRegistry {
 			classes ++= cla.getInterfaces.flatMap(getClasses)
 			cla = cla.getSuperclass
 		}
-		mod.logger.info("{}: {}", cla: Any, classes)
+//		mod.logger.info("{}: {}", _cla: Any, classes)
 		classes.toList
 	}
 
@@ -39,7 +39,7 @@ object SerializationRegistry {
 		}
 		val typ = _types(id)
 		if(!typ.nbtClass.isAssignableFrom(data.getClass)) {
-			mod.logger.info("{}: NBT {} isn't assignable from {}", id, typ.nbtClass, data.getClass)
+			mod.logger.info("{}: NBT {} isn't assignable from {} ({})", id, typ.nbtClass, data, data.getClass)
 			return null.asInstanceOf[T]
 		}
 		val res = typ.asInstanceOf[SerializableType[Any, NBTBase]].readFromNBT(data)
