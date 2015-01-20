@@ -11,7 +11,7 @@ ext {
 	versions = [
 		scala: '2.11.1',
 		minecraft: '1.7.10',
-		forge: '10.13.0.1208'
+		forge: '10.13.2.1286'
 	]
 }
 
@@ -29,7 +29,7 @@ buildscript {
 	}
 
 	dependencies {
-		classpath 'net.minecraftforge.gradle:ForgeGradle:1.3-SNAPSHOT'
+		classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
 	}
 }
 
@@ -54,7 +54,7 @@ dependencies.compile "org.scala-lang:scala-reflect:$versions.scala"
 apply plugin: 'forge'
 minecraft {
 	version = "$versions.minecraft-$versions.forge"
-	assetDir = 'eclipse/assets'
+	runDir = 'eclipse'
 }
 
 apply plugin: 'maven'
