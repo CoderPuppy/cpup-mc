@@ -6,6 +6,7 @@ import net.minecraft.nbt.{NBTBase, NBTTagCompound}
 import scala.collection.mutable
 import cpup.mc.lib.mod.CPupLib
 import scala.collection.mutable.ListBuffer
+import scala.reflect.runtime.universe.TypeTag
 
 object SerializationRegistry {
 	private def mod = CPupLib
@@ -32,7 +33,7 @@ object SerializationRegistry {
 
 	def findType(cla: Class[_]): SerializableType[Any, NBTBase] = getClasses(cla).find(_classes.contains).map(_classes(_)).getOrElse(null)
 
-	def readFromNBT[T](nbt: NBTTagCompound)(implicit manifest: Manifest[T]): T = {
+	def readFromNBT[T](nbt: NBTTagCompound)(implicit typeTag: TypeTag[T]): T = {
 		val id = nbt.getString("id")
 		val data = nbt.getTag("data")
 		if(!_types.contains(id)) {
@@ -64,8 +65,8 @@ object SerializationRegistry {
 		case _ => throw new ClassCastException(s"it's not serializable: ${data.toString}")
 	}
 
-	def read[T](nbt: NBTTagCompound)(implicit manifest: Manifest[T]): T = readFromNBT[T](nbt)
-	def read[T](stack: ItemStack)(implicit manifest: Manifest[T]): T = read[T](ItemUtil.compound(stack))
+	def read[T](nbt: NBTTagCompound)(implicit typeTag: TypeTag[T]): T = readFromNBT[T](nbt)
+	def read[T](stack: ItemStack)(implicit typeTag: TypeTag[T]): T = read[T](ItemUtil.compound(stack))
 
 	// Load some serializations
 	MapSerialization
