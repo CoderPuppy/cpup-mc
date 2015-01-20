@@ -1,5 +1,7 @@
 package cpup.mc.lib.content
 
+import java.util.UUID
+
 import net.minecraft.item.{ItemStack, Item}
 import cpup.mc.lib.{CPupModRef, CPupMod}
 import net.minecraft.entity.player.EntityPlayer
@@ -53,4 +55,7 @@ trait CPupItem[MOD <: CPupMod[_ <: CPupModRef]] extends Item {
 		}
 	}
 	def addLore(stack: ItemStack, player: EntityPlayer, lore: mutable.Buffer[String], advanced: Boolean) {}
+}
+object CPupItem {
+	final val itemUUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF")
 }
