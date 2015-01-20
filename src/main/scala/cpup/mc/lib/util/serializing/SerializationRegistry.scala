@@ -1,5 +1,7 @@
 package cpup.mc.lib.util.serializing
 
+import cpup.mc.lib.util.ItemUtil
+import net.minecraft.item.ItemStack
 import net.minecraft.nbt.{NBTBase, NBTTagCompound}
 import scala.collection.mutable
 import cpup.mc.lib.mod.CPupLib
@@ -61,6 +63,9 @@ object SerializationRegistry {
 			res
 		case _ => throw new ClassCastException(s"it's not serializable: ${data.toString}")
 	}
+
+	def read[T](nbt: NBTTagCompound)(implicit manifest: Manifest[T]): T = readFromNBT[T](nbt)
+	def read[T](stack: ItemStack)(implicit manifest: Manifest[T]): T = read[T](ItemUtil.compound(stack))
 
 	// Load some serializations
 	MapSerialization
