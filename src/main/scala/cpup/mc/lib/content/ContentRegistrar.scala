@@ -13,7 +13,7 @@ trait ContentRegistrar[MOD <: CPupMod[_ <: CPupModRef]] {
 	def registerBlock(block: CPupBlock[MOD], item: Class[_ <: ItemBlock], args: Object*)
 	def registerTileEntity(cla: Class[_ <: CPupTE[MOD]], id: String)
 
-	def registerItem(item: CPupItem[MOD])
+	def registerItem(item: CPupItem)
 
 	def registerRecipe(recipe: IRecipe)
 }

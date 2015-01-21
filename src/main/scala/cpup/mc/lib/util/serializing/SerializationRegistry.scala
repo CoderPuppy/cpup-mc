@@ -33,30 +33,30 @@ object SerializationRegistry {
 
 	def findType(cla: Class[_]): SerializableType[Any, NBTBase] = getClasses(cla).find(_classes.contains).map(_classes(_)).getOrElse(null)
 
-	def readFromNBT[T](nbt: NBTTagCompound)(implicit typeTag: TypeTag[T]): T = {
+	def readFromNBT[T](nbt: NBTTagCompound)(implicit typeTag: TypeTag[T]): Option[T] = {
 		val id = nbt.getString("id")
 		val data = nbt.getTag("data")
 		if(!_types.contains(id)) {
 			if(id != "") mod.logger.info("no such type: {} {}", id: Any, _types)
-			return null.asInstanceOf[T]
+			return None
 		}
 		val typ = _types(id)
 		if(!typ.nbtClass.isAssignableFrom(data.getClass)) {
 			mod.logger.info("{}: NBT {} isn't assignable from {} ({})", id, typ.nbtClass, data, data.getClass)
-			return null.asInstanceOf[T]
+			return None
 		}
 		val res = typ.asInstanceOf[SerializableType[Any, NBTBase]].readFromNBT(data)
 		if(res == null) {
 			mod.logger.info("{} had an issue deserializing {}", id, data: Any)
-			return null.asInstanceOf[T]
+			return None
 		}
 		val runtimeClass = runtimeMirror(getClass.getClassLoader).runtimeClass(typeTag.tpe)
 //		mod.logger.debug("runtime class: {}", typeTag.mirror.runtimeClass(typeTag.tpe).getComponentType)
 		if(!runtimeClass.isAssignableFrom(res.getClass)) {
 			mod.logger.info("{}: data {} isn't assignable from {}", id, runtimeClass, res.getClass)
-			return null.asInstanceOf[T]
+			return None
 		}
-		res.asInstanceOf[T]
+		Some(res.asInstanceOf[T])
 	}
 	def writeToNBT(data: Any): NBTTagCompound = findType(data.getClass) match {
 		case typ: SerializableType[Any, NBTBase] =>
@@ -66,9 +66,6 @@ object SerializationRegistry {
 			res
 		case _ => throw new ClassCastException(s"it's not serializable: ${data.toString}")
 	}
-
-	def read[T](nbt: NBTTagCompound)(implicit typeTag: TypeTag[T]): T = readFromNBT[T](nbt)
-	def read[T](stack: ItemStack)(implicit typeTag: TypeTag[T]): T = read[T](ItemUtil.compound(stack))
 
 	// Load some serializations
 	MapSerialization

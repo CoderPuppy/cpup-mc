@@ -20,7 +20,7 @@ trait CPupContent[MOD <: CPupMod[_ <: CPupModRef]] extends ContentRegistrar[MOD]
 
 	protected var _blocks = new mutable.HashMap[String, CPupBlock[MOD]]()
 	def blocks = _blocks
-	protected var _items = new mutable.HashMap[String, CPupItem[MOD]]()
+	protected var _items = new mutable.HashMap[String, CPupItem]()
 	def items = _items
 
 	protected var _postInited = false
@@ -31,7 +31,7 @@ trait CPupContent[MOD <: CPupMod[_ <: CPupModRef]] extends ContentRegistrar[MOD]
 		_postInited = true
 	}
 
-	override def registerItem(item: CPupItem[MOD]) {
+	override def registerItem(item: CPupItem) {
 		if(item == null)
 			throw new RuntimeException("Cannot register null as an item")
 

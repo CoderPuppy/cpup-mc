@@ -1,12 +1,10 @@
 package cpup.mc.lib.content
 
 import net.minecraft.block.Block
-import cpup.mc.lib.{CPupModRef, CPupMod}
+import cpup.mc.lib.{CPupModHolder, CPupModRef, CPupMod}
 import cpup.mc.lib.network.BlockMessage
 
-trait CPupBlock[MOD <: CPupMod[_ <: CPupModRef]] extends Block {
-	def mod: MOD
-
+trait CPupBlock[MOD <: CPupMod[_ <: CPupModRef]] extends Block { self: CPupModHolder[MOD] =>
 	protected var _name: String = null
 	def name = _name
 	def name_=(newName: String) = {
