@@ -27,7 +27,6 @@ object SerializationRegistry {
 			classes ++= cla.getInterfaces.flatMap(getClasses)
 			cla = cla.getSuperclass
 		}
-//		mod.logger.info("{}: {}", _cla: Any, classes)
 		classes.toList
 	}
 
@@ -51,7 +50,6 @@ object SerializationRegistry {
 			return None
 		}
 		val runtimeClass = runtimeMirror(getClass.getClassLoader).runtimeClass(typeTag.tpe)
-//		mod.logger.debug("runtime class: {}", typeTag.mirror.runtimeClass(typeTag.tpe).getComponentType)
 		if(!runtimeClass.isAssignableFrom(res.getClass)) {
 			mod.logger.info("{}: data {} isn't assignable from {}", id, runtimeClass, res.getClass)
 			return None

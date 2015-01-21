@@ -17,22 +17,20 @@ object CPupRecipe {
 
 		override def getRecipeSize = width * height
 
-		def parse(inv: InventoryCrafting, ox: Int, oy: Int, data: Array[Array[ItemStack]]): Option[IR]
+		def parse(inv: InventoryCrafting, ox: Int, oy: Int, data: Array[Array[Option[ItemStack]]]): Option[IR]
 		def result(ir: IR): ItemStack
 
 		private def parse(inv: InventoryCrafting): Option[IR] = {
 			for {
-				ox <- 0 to 2 - width + 1
-				oy <- 0 to 2 - height + 1
+				ox <- 0 to (2 - width + 1)
+				oy <- 0 to (2 - height + 1)
 			} {
-				val ox = 0
-				val oy = 0
-				val data = Array.ofDim[ItemStack](width, height)
+				val data = Array.ofDim[Option[ItemStack]](width, height)
 				for {
-					x <- 0 to width
-					y <- 0 to height
+					x <- 0 until width
+					y <- 0 until height
 				} {
-					data(x)(y) = inv.getStackInRowAndColumn(ox + x, oy + y)
+					data(x)(y) = Option(inv.getStackInRowAndColumn(ox + x, oy + y))
 				}
 				parse(inv, ox, oy, data) match {
 					case Some(ir) =>
