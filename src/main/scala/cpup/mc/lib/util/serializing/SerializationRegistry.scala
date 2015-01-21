@@ -6,7 +6,7 @@ import net.minecraft.nbt.{NBTBase, NBTTagCompound}
 import scala.collection.mutable
 import cpup.mc.lib.mod.CPupLib
 import scala.collection.mutable.ListBuffer
-import scala.reflect.runtime.universe.TypeTag
+import scala.reflect.runtime.universe.{TypeTag, runtimeMirror}
 
 object SerializationRegistry {
 	private def mod = CPupLib
@@ -50,8 +50,10 @@ object SerializationRegistry {
 			mod.logger.info("{} had an issue deserializing {}", id, data: Any)
 			return null.asInstanceOf[T]
 		}
-		if(!manifest.runtimeClass.isAssignableFrom(res.getClass)) {
-			mod.logger.info("{}: data {} isn't assignable from {}", id, manifest.runtimeClass, res.getClass)
+		val runtimeClass = runtimeMirror(getClass.getClassLoader).runtimeClass(typeTag.tpe)
+//		mod.logger.debug("runtime class: {}", typeTag.mirror.runtimeClass(typeTag.tpe).getComponentType)
+		if(!runtimeClass.isAssignableFrom(res.getClass)) {
+			mod.logger.info("{}: data {} isn't assignable from {}", id, runtimeClass, res.getClass)
 			return null.asInstanceOf[T]
 		}
 		res.asInstanceOf[T]
