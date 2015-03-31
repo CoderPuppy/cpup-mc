@@ -8,6 +8,10 @@ abstract class Direction(val forgeDir: ForgeDirection) {
 		throw new RuntimeException("Unknown isn't a valid direction")
 	}
 
+	final val x = forgeDir.offsetX
+	final val y = forgeDir.offsetY
+	final val z = forgeDir.offsetZ
+
 	def opposite: Direction
 	def side: Int
 	def facing: Int
@@ -25,34 +29,34 @@ abstract class Direction(val forgeDir: ForgeDirection) {
 
 object Direction {
 	case object North extends Direction(ForgeDirection.NORTH) {
-		def side = 2
-		def facing = 2
-		def opposite = South
+		final val side = 2
+		final val facing = 2
+		final val opposite = South
 	}
 	case object East extends Direction(ForgeDirection.EAST) {
-		def side = 5
-		def facing = 3
-		def opposite = West
+		final val side = 5
+		final val facing = 3
+		final val opposite = West
 	}
 	case object South extends Direction(ForgeDirection.SOUTH) {
-		def side = 3
-		def facing = 0
-		def opposite = North
+		final val side = 3
+		final val facing = 0
+		final val opposite = North
 	}
 	case object West extends Direction(ForgeDirection.WEST) {
-		def side = 4
-		def facing = 1
-		def opposite = East
+		final val side = 4
+		final val facing = 1
+		final val opposite = East
 	}
 	case object Up extends Direction(ForgeDirection.UP) {
-		def side = 1
-		def facing = -1
-		def opposite = Down
+		final val side = 1
+		final val facing = -1
+		final val opposite = Down
 	}
 	case object Down extends Direction(ForgeDirection.DOWN) {
-		def side = 0
-		def facing = -1
-		def opposite = Up
+		final val side = 0
+		final val facing = -1
+		final val opposite = Up
 	}
 
 	def from(dir: ForgeDirection) = dir match {

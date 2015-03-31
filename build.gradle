@@ -11,7 +11,7 @@ ext {
 	versions = [
 		scala: '2.11.1',
 		minecraft: '1.7.10',
-		forge: '10.13.2.1286'
+		forge: '10.13.2.1343'
 	]
 }
 
@@ -53,7 +53,7 @@ dependencies.compile "org.scala-lang:scala-reflect:$versions.scala"
 
 apply plugin: 'forge'
 minecraft {
-	version = "$versions.minecraft-$versions.forge"
+	version = "$versions.minecraft-$versions.forge-$versions.minecraft"
 	runDir = 'eclipse'
 }
 

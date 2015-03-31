@@ -5,6 +5,7 @@ import net.minecraft.inventory.InventoryCrafting
 import net.minecraft.item.ItemStack
 import net.minecraft.item.crafting.IRecipe
 import net.minecraft.world.World
+import net.minecraftforge.common.ForgeHooks
 
 trait CPupRecipe extends IRecipe { self: CPupModHolder[_ <: CPupMod[_ <: CPupModRef]] =>
 	override def getRecipeOutput = null

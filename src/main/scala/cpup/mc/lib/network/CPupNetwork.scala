@@ -1,21 +1,23 @@
 package cpup.mc.lib.network
 
+import java.lang.reflect.Constructor
+
 import cpup.mc.lib.{ModLifecycleHandler, CPupModRef, CPupMod}
+import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent}
 import java.util
 import cpw.mods.fml.common.network.{FMLOutboundHandler, NetworkRegistry, FMLEmbeddedChannel}
 import cpw.mods.fml.relauncher.{SideOnly, Side}
+import io.netty.buffer.{Unpooled, ByteBuf}
 import io.netty.handler.codec.MessageToMessageCodec
 import cpw.mods.fml.common.network.internal.FMLProxyPacket
 import io.netty.channel.{ChannelHandlerContext, ChannelHandler}
-import io.netty.buffer.{ByteBuf, Unpooled}
-import java.lang.reflect.Constructor
-import cpw.mods.fml.common.FMLCommonHandler
-import net.minecraft.network.NetHandlerPlayServer
 import net.minecraft.client.Minecraft
 import net.minecraft.entity.player.EntityPlayer
-import cpup.mc.lib.util.pos.BlockPos
 import cpup.mc.lib.content.CPupBlock
+import net.minecraft.network.NetHandlerPlayServer
+
+// TODO: coordinate the message ids (so both sides don't have to have the exact same setup)
 
 @ChannelHandler.Sharable
 trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef]] extends MessageToMessageCodec[FMLProxyPacket, CPupMessage[MOD]] with ModLifecycleHandler {
@@ -45,10 +47,7 @@ trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef]] extends MessageToMessageCodec
 	def handleMessage(msg: CPupMessage[MOD], player: EntityPlayer) {
 		msg match {
 			case msg: BlockMessage[MOD] =>
-				val pos = BlockPos(player.worldObj, msg.x, msg.y, msg.z)
-				val block = pos.block
-
-				block match {
+				player.worldObj.getBlock(msg.x, msg.y, msg.z) match {
 					case block: CPupBlock[MOD] =>
 						block.handleMessage(msg)
 					case _ =>
@@ -60,12 +59,10 @@ trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef]] extends MessageToMessageCodec
 	def register(cla: Class[_ <: CPupMessage[MOD]]): Boolean = {
 		if(_finished) {
 			throw new Exception("Attempt to register a message after post initialization: " + cla.getCanonicalName)
-			return false
 		}
 
 		if(messages.size > 256) {
 			throw new ArrayIndexOutOfBoundsException("More than 256 messages for a single network")
-			return false
 		}
 
 		if(messages.contains(cla)) {
@@ -118,7 +115,6 @@ trait CPupNetwork[MOD <: CPupMod[_ <: CPupModRef]] extends MessageToMessageCodec
 		val msg = cla.getConstructor(classOf[ChannelHandlerContext], classOf[ByteBuf], classOf[EntityPlayer]).newInstance(ctx, payload.slice, player)
 
 		handleMessage(msg, player)
-
 	}
 
 	@SideOnly(Side.CLIENT)

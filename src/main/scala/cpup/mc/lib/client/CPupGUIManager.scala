@@ -6,7 +6,6 @@ import net.minecraft.world.World
 import cpup.mc.lib.CPupMod
 import net.minecraft.client.gui.GuiScreen
 import cpw.mods.fml.relauncher.{Side, SideOnly}
-import cpup.mc.lib.util.pos.BlockPos
 import net.minecraft.inventory.Container
 
 class CPupGUIManager[MOD <: CPupMod[_], GUI <: CPupGUI[MOD, _ <: GuiScreen, _ <: Container]](val mod: MOD) extends IGuiHandler {
@@ -20,12 +19,12 @@ class CPupGUIManager[MOD <: CPupMod[_], GUI <: CPupGUI[MOD, _ <: GuiScreen, _ <:
 		guis ::= gui
 	}
 
-	def open(player: EntityPlayer, pos: BlockPos, gui: GUI) {
+	def open(player: EntityPlayer, world: World, x: Int, y: Int, z: Int, gui: GUI) {
 		if(!guis.contains(gui)) {
 			throw new NullPointerException("Attempt to open unregistered gui: " + gui.name + " (" + gui.getClass.getCanonicalName + ")")
 		}
 
-		player.openGui(mod, guis.indexOf(gui), pos.world, pos.x, pos.y, pos.z)
+		player.openGui(mod, guis.indexOf(gui), world, x, y, z)
 	}
 
 	def register {
@@ -46,10 +45,10 @@ class CPupGUIManager[MOD <: CPupMod[_], GUI <: CPupGUI[MOD, _ <: GuiScreen, _ <:
 
 	@SideOnly(Side.CLIENT)
 	def getClientGuiElement(id: Int, player: EntityPlayer, world: World, x: Int, y: Int, z: Int) = if(id >= 0 && id < guis.size) {
-		guis(id).clientGUI(player, BlockPos(world, x, y, z))
+		guis(id).clientGUI(player, world, x, y, z)
 	} else { null }
 
 	def getServerGuiElement(id: Int, player: EntityPlayer, world: World, x: Int, y: Int, z: Int) = if(id >= 0 && id < guis.size) {
-		guis(id).container(player, BlockPos(world, x, y, z))
+		guis(id).container(player, world, x, y, z)
 	} else { null }
 }

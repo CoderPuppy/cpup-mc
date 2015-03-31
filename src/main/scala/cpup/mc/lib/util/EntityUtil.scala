@@ -1,7 +1,7 @@
 package cpup.mc.lib.util
 
 import net.minecraft.entity.Entity
-import net.minecraft.util.{MathHelper, MovingObjectPosition, AxisAlignedBB, Vec3}
+import net.minecraft.util._
 import java.util.List
 import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.relauncher.Side
@@ -68,7 +68,7 @@ object EntityUtil {
 		val pos = getPos(entity)
 		val farLook = VectorUtil.offset(pos, getLook(entity), reach)
 
-		entity.worldObj.func_147447_a(pos, farLook, false, false, true)
+		entity.worldObj.func_147447_a(pos, farLook, false, true, false)
 	}
 
 	def getMOPBoth(entity: Entity, _reach: Double) = {

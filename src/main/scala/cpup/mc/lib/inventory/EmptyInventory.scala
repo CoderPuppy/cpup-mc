@@ -4,6 +4,7 @@ import net.minecraft.inventory.IInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.entity.player.EntityPlayer
 import cpup.mc.lib.mod.CPupLib
+import net.minecraft.util.ChatComponentTranslation
 
 // TODO: abstract over IInventory
 object EmptyInventory extends IInventory {

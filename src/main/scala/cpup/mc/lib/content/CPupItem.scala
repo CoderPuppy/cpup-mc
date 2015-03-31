@@ -22,7 +22,7 @@ trait CPupItem extends Item { self: CPupModHolder[_ <: CPupMod[_ <: CPupModRef]]
 
 		_name = newName
 		setUnlocalizedName(mod.ref.modID + ":" + newName)
-		setTextureName(mod.ref.modID + ":" + newName)
+//		setTextureName(mod.ref.modID + ":" + newName)
 
 		this
 	}

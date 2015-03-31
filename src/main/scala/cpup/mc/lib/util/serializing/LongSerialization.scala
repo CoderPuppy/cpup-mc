@@ -10,7 +10,7 @@ object LongSerialization extends SerializableType[Long, NBTTagLong] {
 
 	override def nbtClass = classOf[NBTTagLong]
 	override def writeToNBT(data: Long) = new NBTTagLong(data)
-	override def readFromNBT(nbt: NBTTagLong) = nbt.func_150287_d
+	override def readFromNBT(nbt: NBTTagLong) = nbt.func_150291_c
 
 	SerializationRegistry.registerType(this)
 }

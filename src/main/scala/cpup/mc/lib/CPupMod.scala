@@ -1,5 +1,7 @@
 package cpup.mc.lib
 
+import cpw.mods.fml.common.FMLCommonHandler
+import cpw.mods.fml.relauncher.Side
 import org.apache.logging.log4j.LogManager
 import cpup.mc.lib.content.CPupContent
 import cpw.mods.fml.common.Mod.EventHandler
