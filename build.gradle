@@ -40,10 +40,19 @@ repositories {
 	mavenCentral()
 }
 
+configurations {
+	compile.extendsFrom exportedCompile
+}
+
 dependencies {
 	info.dependencies.each { dep ->
 		compile dep
 	}
+	exportedCompile 'org.apache.logging.log4j:log4j-slf4j-impl:2.0-beta9'
+}
+
+jar {
+	from { configurations.exportedCompile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
 apply plugin: 'scala'
