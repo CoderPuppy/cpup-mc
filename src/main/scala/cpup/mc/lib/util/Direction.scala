@@ -75,6 +75,7 @@ object Direction {
 		case 3 => South
 		case 4 => West
 		case 1 => Up
+		case 0 => Down
 		case _ => null
 	}
 
