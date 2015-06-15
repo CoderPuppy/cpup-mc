@@ -25,23 +25,25 @@ trait CPupMod[REF <: CPupModRef] extends TModule[CPupMod[REF]] with ModLifecycle
 			case Side.CLIENT => Minecraft.getMinecraft.mcDataDir
 			case Side.SERVER => new File(".")
 		}, "config"), ref.modID + ".conf"), (name: String) => {
+			println(ref.modID, name)
 			Option(getClass.getClassLoader.getResourceAsStream(s"assets/${ref.modID}/config/$name.conf"))
 		})
 		override lazy val id = s"${parent.id}/${ref.modID}"
 	}
 
-	def loadModule[T <: AnyRef](implicit cla: Class[T]) = ModuleLoader.load[T](this)(cla).left.map(m => {
-		handleModule[T](m)(cla)
+	// most of the time you'll want to provide it
+	def loadModule[T <: AnyRef](implicit manifest: Manifest[T]) = ModuleLoader.load[T](this, provide = true)(manifest).left.map(m => {
+		handleModule[T](m)(manifest)
 		m
 	})
 
-	def forceLoadModule[T <: AnyRef](implicit cla: Class[T]) = {
-		val m = ModuleLoader.forceLoad[T](this)(cla)
-		handleModule[T](m)(cla)
+	def forceLoadModule[T <: AnyRef](implicit manifest: Manifest[T]) = {
+		val m = ModuleLoader.forceLoad[T](this, provide = true)(manifest)
+		handleModule[T](m)(manifest)
 		m
 	}
 
-	private def handleModule[T <: AnyRef](m: T)(implicit cla: Class[T]) {
+	private def handleModule[T <: AnyRef](m: T)(implicit manifest: Manifest[T]) {
 		m match {case h: ModLifecycleHandler =>
 			registerLifecycleHandler(h)
 		case _ =>}

@@ -1,8 +1,8 @@
 package cpup.mc.lib.network
 
-import cpup.mc.lib.CPupMod
+import cpup.mc.lib.{CPupModRef, CPupMod}
 
-trait BlockMessage[MOD <: CPupMod[_]] extends CPupMessage[MOD] {
+trait BlockMessage[MOD <: CPupMod[ _ <: CPupModRef]] extends CPupMessage[MOD] {
 	def x: Int
 	def y: Int
 	def z: Int

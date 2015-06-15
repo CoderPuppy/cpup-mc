@@ -1,12 +1,12 @@
 package cpup.mc.lib.util
 
+import java.util.List
+
+import cpw.mods.fml.common.FMLCommonHandler
 import net.minecraft.entity.Entity
 import net.minecraft.util._
-import java.util.List
-import cpw.mods.fml.common.FMLCommonHandler
-import cpw.mods.fml.relauncher.Side
-import net.minecraftforge.common.IExtendedEntityProperties
 import net.minecraft.world.World
+import net.minecraftforge.common.IExtendedEntityProperties
 
 object EntityUtil {
 	def wouldSuffocate(world: World, x: Double, y: Double, z: Double, width: Float, height: Float, eyeHeight: Double): Boolean = {

@@ -8,4 +8,6 @@ object Side {
 	final val SERVER = relauncher.Side.SERVER
 	def effective = FMLCommonHandler.instance.getEffectiveSide
 	def code = FMLCommonHandler.instance.getSide
+
+	type T = relauncher.Side
 }

@@ -15,6 +15,8 @@ abstract class Direction(val forgeDir: ForgeDirection) {
 	def opposite: Direction
 	def side: Int
 	def facing: Int
+	def axis: Direction.Axis
+	def dir: Int
 
 	def rotated(axis: Direction, amt: Int = 1) = {
 		var res = this
@@ -28,36 +30,55 @@ abstract class Direction(val forgeDir: ForgeDirection) {
 }
 
 object Direction {
+	sealed trait Axis
+	case object X extends Axis
+	case object Y extends Axis
+	case object Z extends Axis
+
 	case object North extends Direction(ForgeDirection.NORTH) {
 		final val side = 2
 		final val facing = 2
 		final val opposite = South
+		override def axis = Z
+		override def dir = -1
 	}
 	case object East extends Direction(ForgeDirection.EAST) {
 		final val side = 5
 		final val facing = 3
 		final val opposite = West
+		override def axis = X
+		override def dir = 1
 	}
 	case object South extends Direction(ForgeDirection.SOUTH) {
 		final val side = 3
 		final val facing = 0
 		final val opposite = North
+		override def axis = Z
+		override def dir = 1
 	}
 	case object West extends Direction(ForgeDirection.WEST) {
 		final val side = 4
 		final val facing = 1
 		final val opposite = East
+		override def axis = X
+		override def dir = -1
 	}
 	case object Up extends Direction(ForgeDirection.UP) {
 		final val side = 1
 		final val facing = -1
 		final val opposite = Down
+		override def axis = Y
+		override def dir = 1
 	}
 	case object Down extends Direction(ForgeDirection.DOWN) {
 		final val side = 0
 		final val facing = -1
 		final val opposite = Up
+		override def axis = Y
+		override def dir = -1
 	}
+
+	lazy val valid = Seq(North, East, South, West, Up, Down)
 
 	def from(dir: ForgeDirection) = dir match {
 		case ForgeDirection.NORTH => North
@@ -66,6 +87,26 @@ object Direction {
 		case ForgeDirection.WEST => West
 		case ForgeDirection.UP => Up
 		case ForgeDirection.DOWN => Down
+		case _ => null
+	}
+
+	def from(x: Int, y: Int, z: Int) = (x, y, z) match {
+		case ( 0, -1,  0) => Down
+		case ( 0,  1,  0) => Up
+		case ( 0,  0, -1) => North
+		case ( 0,  0,  1) => South
+		case (-1,  0,  0) => West
+		case ( 1,  0,  0) => East
+		case _ => null
+	}
+
+	def from(axis: Axis, dir: Int) = (axis, dir) match {
+		case (Z, -1) => North
+		case (X, 1) => East
+		case (Z, 1) => South
+		case (X, -1) => West
+		case (Y, 1) => Up
+		case (Y, -1) => Down
 		case _ => null
 	}
 

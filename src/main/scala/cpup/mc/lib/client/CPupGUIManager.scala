@@ -3,23 +3,23 @@ package cpup.mc.lib.client
 import cpw.mods.fml.common.network.{NetworkRegistry, IGuiHandler}
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.world.World
-import cpup.mc.lib.CPupMod
+import cpup.mc.lib.{CPupModRef, CPupMod}
 import net.minecraft.client.gui.GuiScreen
 import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.inventory.Container
 
-class CPupGUIManager[MOD <: CPupMod[_], GUI <: CPupGUI[MOD, _ <: GuiScreen, _ <: Container]](val mod: MOD) extends IGuiHandler {
-	protected var guis = List[GUI]()
+class CPupGUIManager[MOD <: CPupMod[_ <: CPupModRef]](val mod: MOD, val _guis: Seq[CPupGUI[MOD]]) extends IGuiHandler {
+	protected var guis = _guis.toList
 
-	def register(gui: GUI) {
-		if(finished) {
-			throw new Exception("Attempt to register gui after finishing: " + gui.name + " (" + gui.getClass.getCanonicalName + ")")
-		}
+//	def register(gui: CPupGUI[MOD]) {
+//		if(finished) {
+//			throw new Exception("Attempt to register gui after finishing: " + gui.name + " (" + gui.getClass.getCanonicalName + ")")
+//		}
+//
+//		guis ::= gui
+//	}
 
-		guis ::= gui
-	}
-
-	def open(player: EntityPlayer, world: World, x: Int, y: Int, z: Int, gui: GUI) {
+	def open(player: EntityPlayer, world: World, x: Int, y: Int, z: Int, gui: CPupGUI[MOD]) {
 		if(!guis.contains(gui)) {
 			throw new NullPointerException("Attempt to open unregistered gui: " + gui.name + " (" + gui.getClass.getCanonicalName + ")")
 		}
@@ -40,10 +40,11 @@ class CPupGUIManager[MOD <: CPupMod[_], GUI <: CPupGUI[MOD, _ <: GuiScreen, _ <:
 
 		_finished = true
 
-		guis = guis.sortBy(_.name)
+
+
+//		guis = guis.sortBy(_.name)
 	}
 
-	@SideOnly(Side.CLIENT)
 	def getClientGuiElement(id: Int, player: EntityPlayer, world: World, x: Int, y: Int, z: Int) = if(id >= 0 && id < guis.size) {
 		guis(id).clientGUI(player, world, x, y, z)
 	} else { null }

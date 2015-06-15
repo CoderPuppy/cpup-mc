@@ -38,7 +38,16 @@ apply plugin: 'java'
 repositories {
 	mavenLocal()
 	mavenCentral()
+	maven {
+		name 'ProfMobius'
+		url 'http://mobiusstrip.eu/maven'
+	}
+	maven {
+		name 'ChickenBones'
+		url 'http://chickenbones.net/maven/'
+	}
 }
+dependencies.compile 'mcp.mobius.waila:Waila:1.5.10_1.7.10'
 
 configurations {
 	compile.extendsFrom exportedCompile
