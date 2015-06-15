@@ -1,32 +1,38 @@
 package cpup.mc.lib.inspecting
 
-import cpup.mc.lib.util.{Direction, Side}
+import cpup.lib.inspecting.Context
+import cpup.mc.lib.util.{BlockPos, Direction, Side}
 import cpw.mods.fml.common.registry.GameData
 import net.minecraft.block.Block
 import net.minecraft.client.Minecraft
 import net.minecraft.server.MinecraftServer
-import net.minecraft.world.World
 
 object Inspectors {
-	Registry.register[Block, MCContext.BlockPos]((blk: Block, ctx: MCContext.BlockPos) => {
-		val tbl = Data.Table(
-			"regID" -> Data.String(GameData.getBlockRegistry.getNameForObject(blk)),
-			"unlocalizedName" -> Data.String(blk.getUnlocalizedName),
-			"meta" -> Data.Int(ctx.world.getBlockMetadata(ctx.x, ctx.y, ctx.z))
-		)
-		Some(ctx.world.getTileEntity(ctx.x, ctx.y, ctx.z) match {
-			case null => tbl
-			case te => tbl + ("te" -> Registry.inspect_(te, ctx))
-		})
+	Registry.register[Block]((blk: Block, ctx: Context) => {
+		for {
+			pos <- ctx[BlockPos]()
+		} yield {
+			val tbl = Data.Table(
+				"regID" -> Data.String(GameData.getBlockRegistry.getNameForObject(blk)),
+				"unlocalizedName" -> Data.String(blk.getUnlocalizedName),
+				"meta" -> Data.Int(pos.world.getBlockMetadata(pos.x, pos.y, pos.z))
+			)
+			pos.world.getTileEntity(pos.x, pos.y, pos.z) match {
+				case null => tbl
+				case te => tbl + ("te" -> Registry.inspect_(te, ctx))
+			}
+		}
 	})
 
-	Registry.register[Any, MCContext.BlockPos]((obj: Any, ctx: MCContext.BlockPos) => {
-		Some(Data.Table(
-			"world" -> Data.Link("minecraft:world", Data.Int(ctx.world.provider.dimensionId)),
-			"x" -> Data.Int(ctx.x),
-			"y" -> Data.Int(ctx.y),
-			"z" -> Data.Int(ctx.z)
-		))
+	Registry.register[Any]((obj: Any, ctx: Context) => {
+		for {
+			pos <- ctx[BlockPos]()
+		} yield Data.Table(
+			"world" -> Data.Link("minecraft:world", Data.Int(pos.world.provider.dimensionId)),
+			"x" -> Data.Int(pos.x),
+			"y" -> Data.Int(pos.y),
+			"z" -> Data.Int(pos.z)
+		)
 	})
 
 	Registry.register("minecraft:block", args => {
@@ -38,12 +44,7 @@ object Inspectors {
 					case _ => None
 				}) match {
 					case Some(_world) => Option(_world.getBlock(_x, _y, _z)).map(blk => {
-						Registry.inspect_(blk, new Object with MCContext.BlockPos {
-							def world = _world
-							def x = _x
-							def y = _y
-							def z = _z
-						})
+						Registry.inspect_(blk, new Context().withF(BlockPos(_world, _x, _y, _z)))
 					})
 					case None => None
 				}
@@ -61,13 +62,7 @@ object Inspectors {
 					case _ => None
 				}) match {
 					case Some(_world) => Option(_world.getBlock(_x, _y, _z)).map(blk => {
-						Registry.inspect_(blk, new Object with MCContext.BlockPos with MCContext.Side {
-							def world = _world
-							def x = _x
-							def y = _y
-							def z = _z
-							def side = Direction.fromSide(_side)
-						})
+						Registry.inspect_(blk, new Context().withF(BlockPos(_world, _x, _y, _z)).withF(Direction.fromSide(_side), 'direction))
 					})
 					case None => None
 				}
