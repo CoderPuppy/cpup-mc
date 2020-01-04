@@ -2,24 +2,29 @@ package cpup.mc.lib.util
 
 import scala.collection.mutable
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent
-import cpw.mods.fml.common.gameevent.TickEvent
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.fml.common.gameevent.TickEvent
 
 object TickUtil {
-	val handlers = new mutable.HashMap[(TickEvent.Type, TickEvent.Phase, Side.T), mutable.Set[() => Unit]] with mutable.MultiMap[(TickEvent.Type, TickEvent.Phase, Side.T), () => Unit]
+	val handlers = new mutable.HashMap[(TickEvent.Type, TickEvent.Phase, Side.T), mutable.Queue[() => Unit]]
 
 	def register(typ: TickEvent.Type, phase: TickEvent.Phase, side: Side.T, handler: () => Unit) {
-		handlers.addBinding((typ, phase, side), handler)
+		handlers.getOrElseUpdate((typ, phase, side), mutable.Queue.empty).enqueue(handler)
 	}
 
 	@SubscribeEvent
 	def tickEvent(e: TickEvent) {
-		for {
-			_handlers <- handlers.get((e.`type`, e.phase, e.side))
-			handler <- _handlers
-		} {
-			_handlers -= handler
-			handler()
+		val key = (e.`type`, e.phase, e.side)
+		for(_handlers <- handlers.get(key)) {
+			while(_handlers.nonEmpty) {
+				_handlers.dequeue().apply()
+			}
 		}
+		handlers.remove(key)
+	}
+
+	def fromSide(side: Side.T) = side match {
+		case Side.CLIENT => TickEvent.Type.CLIENT
+		case Side.SERVER => TickEvent.Type.SERVER
 	}
 }

@@ -10,7 +10,7 @@ object IntSerialization extends Serialization[Int, NBTTagInt] {
 
 	override def nbtClass = classOf[NBTTagInt]
 	override def write(data: Int) = new NBTTagInt(data)
-	override def read(nbt: NBTTagInt) = Left(nbt.func_150287_d)
+	override def read(nbt: NBTTagInt) = Left(nbt.getInt)
 
 	SerializationRegistry.registerType(this)
 }

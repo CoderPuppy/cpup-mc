@@ -10,7 +10,7 @@ object ByteSerialization extends Serialization[Byte, NBTTagByte] {
 
 	override def nbtClass = classOf[NBTTagByte]
 	override def write(data: Byte) = new NBTTagByte(data)
-	override def read(nbt: NBTTagByte) = Left(nbt.func_150290_f)
+	override def read(nbt: NBTTagByte) = Left(nbt.getByte)
 
 	SerializationRegistry.registerType(this)
 }

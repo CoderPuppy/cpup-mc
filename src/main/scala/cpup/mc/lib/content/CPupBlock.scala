@@ -2,7 +2,6 @@ package cpup.mc.lib.content
 
 import net.minecraft.block.Block
 import cpup.mc.lib.{CPupModHolder, CPupModRef, CPupMod}
-import cpup.mc.lib.network.BlockMessage
 
 trait CPupBlock[MOD <: CPupMod[_ <: CPupModRef]] extends Block { self: CPupModHolder[MOD] =>
 	protected var _name: String = null
@@ -17,7 +16,7 @@ trait CPupBlock[MOD <: CPupMod[_ <: CPupModRef]] extends Block { self: CPupModHo
 		}
 
 		_name = newName
-		setBlockName(mod.ref.modID + ":" + newName)
+		setRegistryName(mod.ref.modID, newName)
 
 		this
 	}
@@ -28,9 +27,5 @@ trait CPupBlock[MOD <: CPupMod[_ <: CPupModRef]] extends Block { self: CPupModHo
 			tabs ++= Array(mod.content.creativeTab)
 		}
 		tabs
-	}
-
-	def handleMessage(msg: BlockMessage[MOD]) {
-		mod.logger.warn("Unhandled message: " + msg.toString)
 	}
 }

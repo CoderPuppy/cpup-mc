@@ -39,18 +39,18 @@ object Registry extends inspecting.Registry {
 	}
 	def fromNBT(nbt: NBTBase): Data = nbt match {
 		case v: NBTTagCompound => {
-			Data.Table(JavaConversions.asScalaSet(v.func_150296_c.asInstanceOf[util.Set[String]]).map(k => k -> fromNBT(v.getTag(k))).toSeq: _*)
+			Data.Table(JavaConversions.asScalaSet(v.getKeySet).map(k => k -> fromNBT(v.getTag(k))).toSeq: _*)
 		}
 		case v: NBTTagList => Data.List(NBTUtil.readList(v).map(fromNBT): _*)
-		case v: NBTTagByteArray => Data.List(v.func_150292_c.map(Data.Byte): _*)
-		case v: NBTTagByte => Data.Byte(v.func_150290_f)
-		case v: NBTTagDouble => Data.Double(v.func_150286_g)
-		case v: NBTTagFloat => Data.Float(v.func_150288_h)
-		case v: NBTTagInt => Data.Int(v.func_150287_d)
-		case v: NBTTagIntArray => Data.List(v.func_150302_c.map(Data.Int): _*)
-		case v: NBTTagLong => Data.Long(v.func_150291_c)
-		case v: NBTTagShort => Data.Short(v.func_150289_e)
-		case v: NBTTagString => Data.String(v.func_150285_a_)
+		case v: NBTTagByteArray => Data.List(v.getByteArray.map(Data.Byte): _*)
+		case v: NBTTagByte => Data.Byte(v.getByte)
+		case v: NBTTagDouble => Data.Double(v.getDouble)
+		case v: NBTTagFloat => Data.Float(v.getFloat)
+		case v: NBTTagInt => Data.Int(v.getInt)
+		case v: NBTTagIntArray => Data.List(v.getIntArray.map(Data.Int): _*)
+		case v: NBTTagLong => Data.Long(v.getLong)
+		case v: NBTTagShort => Data.Short(v.getShort)
+		case v: NBTTagString => Data.String(v.getString)
 	}
 
 	val charset = Charset.forName("UTF-16LE")

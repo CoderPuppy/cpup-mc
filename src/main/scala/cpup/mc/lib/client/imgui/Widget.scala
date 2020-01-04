@@ -27,7 +27,7 @@ case class Widget[F <: Form](var form: F, var x: Double = 0, var y: Double = 0, 
 			_clicks -= btn
 		}
 		if(in) {
-			for(btn <- state.mouseDown if !_clicked.contains(btn)) {
+			for(btn <- state.mouseDown if !_clicked.contains(btn) && !prevState.mouseDown.contains(btn)) {
 				_clicks += btn
 				_clicked += btn
 			}

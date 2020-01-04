@@ -1,7 +1,7 @@
 package cpup.mc.lib.util
 
-import cpw.mods.fml.relauncher
-import cpw.mods.fml.common.FMLCommonHandler
+import net.minecraftforge.fml.common.FMLCommonHandler
+import net.minecraftforge.fml.relauncher
 
 object Side {
 	final val CLIENT = relauncher.Side.CLIENT

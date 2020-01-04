@@ -1,7 +1,7 @@
 package cpup.mc.lib.client
 
 import net.minecraft.world.World
-import cpw.mods.fml.relauncher.{SideOnly, Side}
+import net.minecraftforge.fml.relauncher.{SideOnly, Side}
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.inventory.Container
 import cpup.mc.lib.{CPupModRef, CPupMod}

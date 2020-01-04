@@ -1,11 +1,11 @@
 package cpup.mc.lib.client
 
-import cpw.mods.fml.common.network.{NetworkRegistry, IGuiHandler}
+import net.minecraftforge.fml.common.network.{NetworkRegistry, IGuiHandler}
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.world.World
 import cpup.mc.lib.{CPupModRef, CPupMod}
 import net.minecraft.client.gui.GuiScreen
-import cpw.mods.fml.relauncher.{Side, SideOnly}
+import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 import net.minecraft.inventory.Container
 
 class CPupGUIManager[MOD <: CPupMod[_ <: CPupModRef]](val mod: MOD, val _guis: Seq[CPupGUI[MOD]]) extends IGuiHandler {

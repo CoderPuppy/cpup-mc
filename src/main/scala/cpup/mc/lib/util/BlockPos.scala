@@ -1,8 +1,12 @@
 package cpup.mc.lib.util
 
-import net.minecraft.util.Vec3
+import net.minecraft.util.math.{BlockPos ⇒ MCBP}
 import net.minecraft.world.World
 
 case class BlockPos(world: World, x: Int, y: Int, z: Int) {
-	def toVec3 = Vec3.createVectorHelper(x, y, z)
+	def mc = new MCBP(x, y, z)
+}
+
+object BlockPos {
+	type MC = MCBP
 }

@@ -37,9 +37,8 @@ trait CPupItem extends Item { self: CPupModHolder[_ <: CPupMod[_ <: CPupModRef]]
 		tabs
 	}
 
-	override def addInformation(stack: ItemStack, player: EntityPlayer, _lore: util.List[_], advanced: Boolean) {
-		super.addInformation(stack, player, _lore, advanced)
-		val lore = _lore.asInstanceOf[util.List[String]]
+	override def addInformation(stack: ItemStack, player: EntityPlayer, lore: util.List[String], advanced: Boolean) {
+		super.addInformation(stack, player, lore, advanced)
 		try {
 			addLore(stack, player, JavaConversions.asScalaBuffer(lore), advanced)
 		} catch {

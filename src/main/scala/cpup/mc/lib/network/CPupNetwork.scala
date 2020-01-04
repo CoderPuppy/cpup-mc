@@ -1,72 +1,83 @@
 package cpup.mc.lib.network
 
-import java.lang.reflect.Constructor
+import java.nio.charset.Charset
 
 import cpup.mc.lib.network.CPupNetwork.Message
-import cpup.mc.lib.{ModLifecycleHandler, CPupModRef, CPupMod}
-import cpw.mods.fml.common.FMLCommonHandler
-import cpw.mods.fml.common.event.{FMLPreInitializationEvent, FMLPostInitializationEvent, FMLInitializationEvent}
-import java.util
-import cpw.mods.fml.common.network.simpleimpl.{MessageContext, IMessage, IMessageHandler, SimpleNetworkWrapper}
-import cpw.mods.fml.common.network.{FMLOutboundHandler, NetworkRegistry, FMLEmbeddedChannel}
-import cpw.mods.fml.relauncher.{SideOnly, Side}
-import io.netty.buffer.{EmptyByteBuf, Unpooled, ByteBuf}
-import io.netty.handler.codec.MessageToMessageCodec
-import cpw.mods.fml.common.network.internal.FMLProxyPacket
-import io.netty.channel.{ChannelHandlerContext, ChannelHandler}
+import cpup.mc.lib.util.Side
+import cpup.mc.lib.{CPupMod, CPupModRef, ModLifecycleHandler}
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
+import net.minecraftforge.fml.common.network.NetworkRegistry
+import net.minecraftforge.fml.common.network.simpleimpl.{IMessage, IMessageHandler, MessageContext, SimpleNetworkWrapper}
+import net.minecraftforge.fml.relauncher.SideOnly
+import io.netty.buffer.{ByteBuf, Unpooled}
 import net.minecraft.client.Minecraft
-import net.minecraft.entity.player.{EntityPlayerMP, EntityPlayer}
-import cpup.mc.lib.content.CPupBlock
-import net.minecraft.network.{PacketBuffer, NetHandlerPlayServer}
+import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.network.PacketBuffer
 
 // TODO: coordinate the message ids (so both sides don't have to have the exact same setup)
 
-class CPupNetwork[MOD <: CPupMod[_ <: CPupModRef]](val mod: MOD, val messages: Map[Class[_ <: CPupMessage[MOD]], (CPupMessage[MOD]) => Option[CPupMessage[MOD]]]) extends ModLifecycleHandler with IMessageHandler[CPupNetwork.Message, CPupNetwork.Message] {
+class CPupNetwork[DATA <: AnyRef](val name: String, val data: DATA, val handler: (CPupNetwork[DATA]) => (Context, CPupNetwork.Message) => Any, val messages: Set[Class[_ <: CPupMessage[_ >: DATA <: AnyRef]]])(implicit val manifest: Manifest[DATA]) {
 	if(messages.size > 256) {
 		throw new ArrayIndexOutOfBoundsException("More than 256 messages for a single network")
 	}
-
-	val messageClas = messages.keys.toList
+	val messageClas = messages.toList
 
 	for(cla <- messageClas) {
-		cla.getDeclaredConstructor(classOf[EntityPlayer], classOf[PacketBuffer])
+		cla.getDeclaredConstructor(classOf[EntityPlayer], classOf[PacketBuffer], manifest.runtimeClass)
 	}
 
-	var network: SimpleNetworkWrapper = null
-	override def preInit(e: FMLPreInitializationEvent) {
-		network = NetworkRegistry.INSTANCE.newSimpleChannel(mod.ref.modID)
-		network.registerMessage[CPupNetwork.Message, CPupNetwork.Message](this, classOf[CPupNetwork.Message], 0, Side.SERVER)
-		network.registerMessage[CPupNetwork.Message, CPupNetwork.Message](this, classOf[CPupNetwork.Message], 0, Side.CLIENT)
-	}
+	val send = handler(this)
 
 	@SideOnly(Side.CLIENT)
 	protected def getClientPlayer = Minecraft.getMinecraft.thePlayer
 
-	def sendToServer(msg: CPupMessage[MOD]) = {
-		network.sendToServer(new CPupNetwork.Message(this, msg))
-		this
+	def send(ctx: Context, msg: CPupMessage[DATA]) {
+		println(s"sending $msg from ${Side.effective} on $name")
+		send(ctx, new CPupNetwork.Message(this, msg))
 	}
 
-	def sendToAll(msg: CPupMessage[MOD]) = {
-		network.sendToAll(new CPupNetwork.Message(this, msg))
-		this
-	}
-
-	def sendTo(player: EntityPlayerMP, msg: CPupMessage[MOD]) = {
-		network.sendTo(new CPupNetwork.Message(this, msg), player)
-		this
-	}
-
-	override def onMessage(message: CPupNetwork.Message, ctx: MessageContext): CPupNetwork.Message = {
-		val player = if(ctx.side.isClient) Minecraft.getMinecraft.thePlayer else ctx.getServerHandler.playerEntity
-		val msg = message.construct(this, player).asInstanceOf[CPupMessage[MOD]]
-		messages(msg.getClass.asInstanceOf[Class[CPupMessage[MOD]]])(msg).map(new CPupNetwork.Message(this, _)).orNull
+	def handle(player: EntityPlayer, msg: CPupNetwork.Message) = {
+		println(s"got $msg on ${Side.effective} on $name")
+		msg.construct(this, player).handle(data).map(m => new Message(this, m.asInstanceOf[CPupMessage[AnyRef]]))
 	}
 }
 
 object CPupNetwork {
+	val charset = Charset.forName("UTF-8")
+
+	def simpleNetwork[MOD <: CPupMod[_ <: CPupModRef]](mod: MOD)(network: CPupNetwork[_]) = {
+		val _net = new SimpleNetwork[MOD](mod)
+		mod.registerLifecycleHandler(_net)
+		val handler = new _net.Handler(network)
+		mod.registerLifecycleHandler(handler)
+		(ctx: Context, msg: Message) => _net.send(ctx, msg)
+	}
+
+	class SimpleNetwork[MOD <: CPupMod[_ <: CPupModRef]](mod: MOD) extends ModLifecycleHandler {
+		var network: SimpleNetworkWrapper = null
+		override def preInit(e: FMLPreInitializationEvent) {
+			network = NetworkRegistry.INSTANCE.newSimpleChannel(mod.ref.modID)
+		}
+
+		def send(ctx: Context, msg: Message) {
+			ctx.send(network, msg)
+		}
+
+		class Handler(val cnetwork: CPupNetwork[_]) extends IMessageHandler[Message, Message] with ModLifecycleHandler {
+			override def preInit(e: FMLPreInitializationEvent) {
+				network.registerMessage[Message, Message](this, classOf[Message], 0, Side.SERVER)
+				network.registerMessage[Message, Message](this, classOf[Message], 0, Side.CLIENT)
+			}
+
+			override def onMessage(message: CPupNetwork.Message, ctx: MessageContext): CPupNetwork.Message = {
+				val player = if(ctx.side.isClient) Minecraft.getMinecraft.thePlayer else ctx.getServerHandler.playerEntity
+				cnetwork.handle(player, message).orNull
+			}
+		}
+	}
+
 	class Message(var id: Byte, var data: PacketBuffer = new PacketBuffer(Unpooled.buffer)) extends IMessage {
-		def this(network: CPupNetwork[_ <: CPupMod[_ <: CPupModRef]], msg: CPupMessage[_ <: CPupMod[_ <: CPupModRef]]) {
+		def this(network: CPupNetwork[_ <: AnyRef], msg: CPupMessage[_ <: AnyRef]) {
 			this({
 				val n = network.messageClas.indexOf(msg.getClass)
 				(if(n > 127) -n + 127 else n).toByte
@@ -78,8 +89,8 @@ object CPupNetwork {
 		}
 		def this() { this(0) }
 
-		def construct(net: CPupNetwork[_ <: CPupMod[_ <: CPupModRef]], player: EntityPlayer): CPupMessage[_ <: CPupMod[_ <: CPupModRef]] = {
-			net.messageClas(id).getConstructor(classOf[EntityPlayer], classOf[PacketBuffer]).newInstance(player, data)
+		def construct[DATA <: AnyRef](net: CPupNetwork[DATA], player: EntityPlayer): CPupMessage[_ >: DATA <: AnyRef] = {
+			net.messageClas(id).getConstructor(classOf[EntityPlayer], classOf[PacketBuffer], net.manifest.runtimeClass).newInstance(player, data, net.data)
 		}
 
 		override def toBytes(buf: ByteBuf) {

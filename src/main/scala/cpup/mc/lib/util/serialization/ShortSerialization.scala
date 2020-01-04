@@ -10,7 +10,7 @@ object ShortSerialization extends Serialization[Short, NBTTagShort] {
 
 	override def nbtClass = classOf[NBTTagShort]
 	override def write(data: Short) = new NBTTagShort(data)
-	override def read(nbt: NBTTagShort) = Left(nbt.func_150289_e)
+	override def read(nbt: NBTTagShort) = Left(nbt.getShort)
 
 	SerializationRegistry.registerType(this)
 }

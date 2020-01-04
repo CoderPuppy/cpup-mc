@@ -6,11 +6,10 @@ import cpup.lib.config.ConfigLoader
 import cpup.lib.module.{ModuleLoader, ModuleSpec, TModule}
 import cpup.mc.lib.content.CPupContent
 import cpup.mc.lib.module.FMLModule
-import cpw.mods.fml.common.FMLCommonHandler
-import cpw.mods.fml.common.Mod.EventHandler
-import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent, FMLServerStartingEvent}
-import cpw.mods.fml.relauncher.Side
+import cpup.mc.lib.util.Side
 import net.minecraft.client.Minecraft
+import net.minecraftforge.fml.common.Mod.EventHandler
+import net.minecraftforge.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent, FMLServerStartingEvent}
 
 trait CPupMod[REF <: CPupModRef] extends TModule[CPupMod[REF]] with ModLifecycleHandler {
 	ModuleLoader.modulesByInst(this) = this
@@ -21,11 +20,10 @@ trait CPupMod[REF <: CPupModRef] extends TModule[CPupMod[REF]] with ModLifecycle
 	override def inst = this
 	override def spec = new ModuleSpec[CPupMod[REF]](ModuleLoader.moduleType[CPupMod[REF]](classOf[CPupMod[REF]]), FMLModule.spec) {
 		// i really shouldn't do this, but i need t he config before preinit
-		override lazy val config = ConfigLoader(new File(new File(FMLCommonHandler.instance.getSide match {
+		override lazy val config = ConfigLoader(new File(new File(Side.effective match {
 			case Side.CLIENT => Minecraft.getMinecraft.mcDataDir
 			case Side.SERVER => new File(".")
 		}, "config"), ref.modID + ".conf"), (name: String) => {
-			println(ref.modID, name)
 			Option(getClass.getClassLoader.getResourceAsStream(s"assets/${ref.modID}/config/$name.conf"))
 		})
 		override lazy val id = s"${parent.id}/${ref.modID}"

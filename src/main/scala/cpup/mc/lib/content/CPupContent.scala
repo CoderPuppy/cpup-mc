@@ -1,10 +1,12 @@
 package cpup.mc.lib.content
 
-import cpw.mods.fml.common.registry.GameRegistry
+import net.minecraftforge.fml.common.registry.GameRegistry
 import cpup.mc.lib.{CPupModRef, CPupMod}
+import net.minecraftforge.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
+import net.minecraftforge.fml.common.registry.GameRegistry
 import scala.collection.mutable
 import net.minecraft.item.{ItemStack, ItemBlock}
-import cpw.mods.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
+import net.minecraftforge.fml.common.event.{FMLPostInitializationEvent, FMLInitializationEvent, FMLPreInitializationEvent}
 import net.minecraftforge.oredict.{ShapelessOreRecipe, ShapedOreRecipe}
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.init.Blocks
@@ -42,10 +44,10 @@ trait CPupContent[MOD <: CPupMod[_ <: CPupModRef]] extends ContentRegistrar[MOD]
 			throw new RuntimeException("Attempt to register an item after initialization")
 
 		items(item.name) = item
-		GameRegistry.registerItem(item, item.name, mod.ref.modID)
+		GameRegistry.register(item)
 	}
 
-	override def registerBlock(block: CPupBlock[MOD], item: Class[_ <: ItemBlock], constructorArgs: Object*) {
+	override def registerBlock(block: CPupBlock[MOD]) {
 		if(block == null)
 			throw new RuntimeException("Cannot register null as a block")
 
@@ -56,7 +58,7 @@ trait CPupContent[MOD <: CPupMod[_ <: CPupModRef]] extends ContentRegistrar[MOD]
 		throw new RuntimeException("Attempt to register a block after initialization")
 
 		blocks(block.name) = block
-		GameRegistry.registerBlock(block, item, block.name, constructorArgs: _*)
+		GameRegistry.register(block)
 	}
 	override def registerTileEntity(cla: Class[_ <: CPupTE[MOD]], id: String) {
 		GameRegistry.registerTileEntity(cla, id)

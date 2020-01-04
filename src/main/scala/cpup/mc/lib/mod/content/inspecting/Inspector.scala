@@ -2,6 +2,9 @@ package cpup.mc.lib.mod.content.inspecting
 
 import java.util
 
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats
+import net.minecraft.util.{EnumActionResult, EnumHand, EnumFacing}
+
 import scala.collection.mutable
 
 import cpup.mc.lib.client.imgui
@@ -9,9 +12,8 @@ import cpup.mc.lib.client.imgui.{Label, Widget}
 import cpup.mc.lib.inspecting.Registry.Data
 import cpup.mc.lib.inspecting.Request
 import cpup.mc.lib.mod.content.{BaseGUI, BaseItem}
-import cpup.mc.lib.util.EntityUtil
+import cpup.mc.lib.util.{Direction, BlockPos, EntityUtil}
 import net.minecraft.client.Minecraft
-import net.minecraft.client.entity.EntityClientPlayerMP
 import net.minecraft.client.gui.{GuiButton, GuiScreen}
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.entity.player.EntityPlayer
@@ -24,9 +26,9 @@ import org.lwjgl.opengl.GL11
 object Inspector extends BaseItem {
 	name = "inspector"
 
-	override def onItemUseFirst(stack: ItemStack, player: EntityPlayer, world: World, x: Int, y: Int, z: Int, side: Int, hitX: Float, hitY: Float, hitZ: Float) = {
-		mod.gui.open(player, world, x, y, z, GUI)
-		true
+	override def onItemUseFirst(stack: ItemStack, player: EntityPlayer, world: World, pos: BlockPos.MC, side: EnumFacing, hitX: Float, hitY: Float, hitZ: Float, hand: EnumHand) = {
+		mod.gui.open(player, world, pos.getX, pos.getY, pos.getZ, GUI)
+		EnumActionResult.SUCCESS
 	}
 
 	object GUI extends BaseGUI {
@@ -38,9 +40,9 @@ object Inspector extends BaseItem {
 		}
 		override def clientGUI(player: EntityPlayer, world: World, x: Int, y: Int, z: Int) = {
 			new Screen(("minecraft:block:side", List(
-				Data.Int(world.provider.dimensionId),
+				Data.Int(world.provider.getDimension),
 				Data.Int(x), Data.Int(y), Data.Int(z),
-				Data.Int(EntityUtil.getMOPBlock(player, Minecraft.getMinecraft.playerController.getBlockReachDistance).sideHit)
+				Data.Int(Direction.toSide(EntityUtil.getMOPBlock(player, Minecraft.getMinecraft.playerController.getBlockReachDistance).sideHit))
 			)))
 		}
 		class Screen(req: (String, List[Data])) extends GuiScreen {
@@ -89,33 +91,43 @@ object Inspector extends BaseItem {
 				val lineHeight = 10
 				data match {
 					case tbl: Data.Table => {
-						var height = 2
-						gui(Widget(Label(s"{ #${tbl.size}"), x = x))
-						gui.pushMatrix
-						gui.translate(indentSize, lineHeight)
-						for(kv <- tbl) {
-							val keyWidth = gui(Widget(Label(kv._1 + " = "))).width
-							val elHeight = render(kv._2, keyWidth)
-							height += elHeight
-							gui.translate(0, elHeight * lineHeight)
+						if(tbl.isEmpty) {
+							gui(Widget(Label("{}"), x = x))
+							1
+						} else {
+							var height = 2
+							gui(Widget(Label(s"{ #${tbl.size}"), x = x))
+							gui.pushMatrix
+							gui.translate(indentSize, lineHeight)
+							for(kv <- tbl) {
+								val keyWidth = gui(Widget(Label(kv._1 + " = "))).width
+								val elHeight = render(kv._2, keyWidth)
+								height += elHeight
+								gui.translate(0, elHeight * lineHeight)
+							}
+							gui(Widget(Label("}"), x = -indentSize))
+							gui.popMatrix
+							height
 						}
-						gui(Widget(Label("}"), x = -indentSize))
-						gui.popMatrix
-						height
 					}
 					case list: Data.List => {
-						var height = 2
-						gui(Widget(Label(s"[ #${list.size}"), x = x))
-						gui.pushMatrix
-						gui.translate(indentSize, lineHeight)
-						for(el <- list) {
-							val elHeight = render(el, 0)
-							height += elHeight
-							gui.translate(0, elHeight * lineHeight)
+						if(list.isEmpty) {
+							gui(Widget(Label("[]"), x = x))
+							1
+						} else {
+							var height = 2
+							gui(Widget(Label(s"[ #${list.size}"), x = x))
+							gui.pushMatrix
+							gui.translate(indentSize, lineHeight)
+							for(el <- list) {
+								val elHeight = render(el, 0)
+								height += elHeight
+								gui.translate(0, elHeight * lineHeight)
+							}
+							gui(Widget(Label("]"), x = -indentSize))
+							gui.popMatrix
+							height
 						}
-						gui(Widget(Label("]"), x = -indentSize))
-						gui.popMatrix
-						height
 					}
 					case Data.String(str) =>
 						gui(Widget(Label(
@@ -146,24 +158,29 @@ object Inspector extends BaseItem {
 				GL11.glPushMatrix
 				GL11.glDisable(GL11.GL_LIGHTING)
 				GL11.glDisable(GL11.GL_FOG)
-				val tessellator: Tessellator = Tessellator.instance
+				val tess = Tessellator.getInstance
+				val buff = tess.getBuffer
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F)
 				val f: Float = 32.0F
 				GL11.glDisable(GL11.GL_TEXTURE_2D)
-				tessellator.startDrawingQuads
-				tessellator.setColorOpaque_I(0x888888)
-				tessellator.addVertex(0, height, 0)
-				tessellator.addVertex(width, height, 0)
-				tessellator.addVertex(width, 0, 0)
-				tessellator.addVertex(0, 0, 0)
-				tessellator.draw
+//				tess.startDrawingQuads
+				buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR)
+//				tess.setColorOpaque_I(0x888888)
+				buff.pos(0, height, 0).color(0x88, 0x88, 0x88, 0xFF).endVertex()
+				buff.pos(width, height, 0).color(0x88, 0x88, 0x88, 0xFF).endVertex()
+				buff.pos(width, 0, 0).color(0x88, 0x88, 0x88, 0xFF).endVertex()
+				buff.pos(0, 0, 0).color(0x88, 0x88, 0x88, 0xFF).endVertex()
+//				tess.addVertex(0, height, 0)
+//				tess.addVertex(width, height, 0)
+//				tess.addVertex(width, 0, 0)
+//				tess.addVertex(0, 0, 0)
+				tess.draw
 				GL11.glEnable(GL11.GL_TEXTURE_2D)
 				super.drawScreen(mx, my, tick)
 				val req = path.top
 				gui(Widget(Label(s"${req.typ}: ${req.id.mkString(", ")}"), x = 30, y = 10))
 				gui.pushMatrix
 				gui.translate(5, 30)
-//				gui.rotate(.5)
 				path.top.res match {
 					case Left(data) => render(data)
 					case Right(err) => gui(Widget(Label(err, 0xFF0000)))

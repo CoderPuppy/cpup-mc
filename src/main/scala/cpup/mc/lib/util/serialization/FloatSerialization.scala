@@ -10,7 +10,7 @@ object FloatSerialization extends Serialization[Float, NBTTagFloat] {
 
 	override def nbtClass = classOf[NBTTagFloat]
 	override def write(data: Float) = new NBTTagFloat(data)
-	override def read(nbt: NBTTagFloat) = Left(nbt.func_150288_h)
+	override def read(nbt: NBTTagFloat) = Left(nbt.getFloat)
 
 	SerializationRegistry.registerType(this)
 }

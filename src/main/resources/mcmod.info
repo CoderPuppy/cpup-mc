@@ -1,7 +1,7 @@
 [
 	{
 		"modid": "cpup-mc",
-		"name": "CoderPuppy's Library Mod",
+		"name": "CPupMC",
 		"version": "$version",
 		"mcversion": "$mcVersion",
 		"authors": ["CoderPuppy"]

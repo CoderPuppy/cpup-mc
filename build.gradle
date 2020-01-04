@@ -1,17 +1,18 @@
 ext {
 	info = [
-		name: 'cpup-mc',
-		group: 'cpup.mc.lib',
-		version: 'dev',
+		name: "cpup-mc",
+		group: "cpup.mc.lib",
+		version: "dev",
 		dependencies: [
-			'cpup.lib:cpup-lib:dev'
+			"cpup.lib:cpup-lib:dev",
+			"mcp.mobius.waila:Waila:1.7.0-B2_1.9"
 		]
 	]
 
 	versions = [
-		scala: '2.11.1',
-		minecraft: '1.7.10',
-		forge: '10.13.2.1343'
+		scala: "2.11.1",
+		minecraft: "1.9",
+		forge: "12.16.0.1863"
 	]
 }
 
@@ -19,35 +20,31 @@ buildscript {
 	repositories {
 		mavenCentral()
 		maven {
-			name = 'forge'
-			url = 'http://files.minecraftforge.net/maven'
+			name = "forge"
+			url = "http://files.minecraftforge.net/maven"
 		}
 		maven {
-			name = 'sonatype'
-			url = 'https://oss.sonatype.org/content/repositories/snapshots/'
+			name = "sonatype"
+			url = "https://oss.sonatype.org/content/repositories/snapshots/"
 		}
 	}
 
 	dependencies {
-		classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+		classpath "net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT"
 	}
 }
 
-apply plugin: 'java'
+apply plugin: "java"
 
 repositories {
 	mavenLocal()
 	mavenCentral()
+
 	maven {
-		name 'ProfMobius'
-		url 'http://mobiusstrip.eu/maven'
-	}
-	maven {
-		name 'ChickenBones'
-		url 'http://chickenbones.net/maven/'
+		name "ProfMobius"
+		url "http://mobiusstrip.eu/maven"
 	}
 }
-dependencies.compile 'mcp.mobius.waila:Waila:1.5.10_1.7.10'
 
 configurations {
 	compile.extendsFrom exportedCompile
@@ -57,35 +54,37 @@ dependencies {
 	info.dependencies.each { dep ->
 		compile dep
 	}
-	exportedCompile 'org.apache.logging.log4j:log4j-slf4j-impl:2.0-beta9'
+	exportedCompile "org.apache.logging.log4j:log4j-slf4j-impl:2.0-beta9"
 }
 
 jar {
 	from { configurations.exportedCompile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
-apply plugin: 'scala'
+apply plugin: "scala"
 dependencies.compile "org.scala-lang:scala-compiler:$versions.scala"
 dependencies.compile "org.scala-lang:scala-library:$versions.scala"
 dependencies.compile "org.scala-lang:scala-reflect:$versions.scala"
 
-apply plugin: 'forge'
+apply plugin: "net.minecraftforge.gradle.forge"
 minecraft {
 	version = "$versions.minecraft-$versions.forge-$versions.minecraft"
-	runDir = 'eclipse'
+	runDir = "run"
+	mappings = "snapshot_20160312"
+	useDepAts = true
 }
 
-apply plugin: 'maven'
+apply plugin: "maven"
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
+        include "mcmod.info"
 
         expand version: info.version, mcVersion: versions.minecraft
     }
 
     from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+        exclude "mcmod.info"
     }
 }
 

@@ -10,7 +10,7 @@ object DoubleSerialization extends Serialization[Double, NBTTagDouble] {
 
 	override def nbtClass = classOf[NBTTagDouble]
 	override def write(data: Double) = new NBTTagDouble(data)
-	override def read(nbt: NBTTagDouble) = Left(nbt.func_150286_g)
+	override def read(nbt: NBTTagDouble) = Left(nbt.getDouble)
 
 	SerializationRegistry.registerType(this)
 }

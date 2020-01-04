@@ -1,11 +1,13 @@
 package cpup.mc.lib.inspecting
 
+import cpup.mc.lib.mod.CPupLib
+import cpup.mc.lib.network.CPupMessage
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.network.PacketBuffer
 
-class ResponseMessage(val call: Int, val data: Either[Data, String]) extends BaseMessage {
-	def this(player: EntityPlayer, buf: PacketBuffer) = {
+class ResponseMessage(val call: Int, val data: Either[Data, String]) extends CPupMessage[AnyRef] {
+	def this(player: EntityPlayer, buf: PacketBuffer, data: AnyRef) = {
 		this(
 			buf.readInt,
 			{
@@ -28,13 +30,11 @@ class ResponseMessage(val call: Int, val data: Either[Data, String]) extends Bas
 				buf.writeBytes(bytes)
 		}
 	}
-}
 
-object ResponseMessage {
-	def handler(msg: ResponseMessage) = {
-		Request._requests.get(msg.call) match {
-			case Some(req) => req.update(msg.data)
-			case None => println("request disappeared before response", msg.call, msg.data)
+	override def handle(_data: AnyRef) = {
+		Request._requests.get(call) match {
+			case Some(req) => req.update(data)
+			case None => CPupLib.logger.warn("request disappeared before response", call, data)
 		}
 		None
 	}

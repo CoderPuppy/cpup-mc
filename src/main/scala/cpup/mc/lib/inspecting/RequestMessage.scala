@@ -1,14 +1,12 @@
 package cpup.mc.lib.inspecting
 
-import java.nio.charset.Charset
-
+import cpup.mc.lib.network.CPupMessage
 import cpup.mc.lib.util.Side
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.network.PacketBuffer
 
-class RequestMessage(val typ: String, val id: List[Data]) extends BaseMessage {
-	def this(player: EntityPlayer, buf: PacketBuffer) = {
+class RequestMessage(val typ: String, val id: List[Data]) extends CPupMessage[AnyRef] {
+	def this(player: EntityPlayer, buf: PacketBuffer, data: AnyRef) = {
 		this(
 			buf.readBytes(buf.readInt).toString(Registry.charset),
 			(0 until buf.readInt).map(v => Registry.readFromByteBuf(buf)).toList
@@ -22,12 +20,10 @@ class RequestMessage(val typ: String, val id: List[Data]) extends BaseMessage {
 		buf.writeInt(id.size)
 		for(data <- id) Registry.writeToByteBuf(data, buf)
 	}
-}
 
-object RequestMessage {
-	def handler(msg: RequestMessage) = {
-		if(Side.effective == Side.SERVER)
-			Some(new ResponseMessage((msg.typ, msg.id).hashCode, Registry.get(msg.typ, msg.id: _*)))
+	override def handle(data: AnyRef) = {
+		if(Side.effective.isServer)
+			Some(new ResponseMessage((typ, id).hashCode, Registry.get(typ, id: _*)))
 		else
 			None
 	}

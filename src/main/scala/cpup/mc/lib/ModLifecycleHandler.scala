@@ -1,6 +1,6 @@
 package cpup.mc.lib
 
-import cpw.mods.fml.common.event.{FMLServerStartingEvent, FMLPostInitializationEvent, FMLPreInitializationEvent, FMLInitializationEvent}
+import net.minecraftforge.fml.common.event.{FMLServerStartingEvent, FMLPostInitializationEvent, FMLPreInitializationEvent, FMLInitializationEvent}
 
 trait ModLifecycleHandler {
 	def preInit(e: FMLPreInitializationEvent) {}
